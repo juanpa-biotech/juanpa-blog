@@ -1,0 +1,26 @@
+---
+title: "Data analysis, science and other stuff 🤓"
+listing:
+  contents: posts
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: true
+  filter-ui: true
+page-layout: full
+title-block-banner: true
+---
+
+Hello, welcome to my blog.
+
+My name is Juan Pablo, I have a PhD in Biotechnology from the Universidad Autónoma Metropolitana, Mexico City.
+
+In this blog I share posts with topics of my interest, such as data analysis with R code, science communication and other things that will take shape little by little.
+
+Some time ago I maintained a blog called "R in the Lab" focused exclusively on the analysis with R of data obtained in the laboratory of chemical and biological sciences, but after some stumbles I decided to start again with a blog where I could write about any topic.
+
+Previously I was using the "blogdown" package, but I must admit that things became a bit tedious, especially the maintenance and the inclusion of new posts. In the search for alternatives I found the fabulous post by [Rebecca Barter - Thanks, Quarto, for saving my blog!](https://www.rebeccabarter.com/blog/2023-03-21-quarto-website), which gave me the idea for the design of my new blog.
+
+If you have any questions about any of the posts please email me at *jpch_26\@outlook.com* or *jpch_biotech\@outlook.com*. In the *About the author* section you will find my social networks, you can also contact me there!
+
+Thank you very much for visiting my blog, I hope you find it useful, see you next time! 🤓

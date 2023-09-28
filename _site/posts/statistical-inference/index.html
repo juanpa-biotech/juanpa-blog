@@ -1,0 +1,1086 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2023-09-27">
+<meta name="description" content="Some statistical inference concepts and terms explained using R">
+
+<title>Juan Pablo Carreón Hidalgo - Statistical Inference with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Juan Pablo Carreón Hidalgo</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About the author</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/juanpa-biotech" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/juanpa_biotech" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Statistical Inference with R</h1>
+                  <div>
+        <div class="description">
+          Some statistical inference concepts and terms explained using R
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">statistical inference</div>
+                <div class="quarto-category">statistics</div>
+                <div class="quarto-category">population</div>
+                <div class="quarto-category">sample</div>
+                <div class="quarto-category">parameters</div>
+                <div class="quarto-category">mean</div>
+                <div class="quarto-category">variance</div>
+                <div class="quarto-category">standard deviation</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">September 27, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#introduction" id="toc-introduction" class="nav-link active" data-scroll-target="#introduction">Introduction</a></li>
+  <li><a href="#populations-samples-parameters-and-statistics" id="toc-populations-samples-parameters-and-statistics" class="nav-link" data-scroll-target="#populations-samples-parameters-and-statistics">Populations, Samples, Parameters and Statistics</a></li>
+  <li><a href="#calculation-of-statistics" id="toc-calculation-of-statistics" class="nav-link" data-scroll-target="#calculation-of-statistics">Calculation of Statistics</a>
+  <ul class="collapse">
+  <li><a href="#sample-mean-or-sample-average" id="toc-sample-mean-or-sample-average" class="nav-link" data-scroll-target="#sample-mean-or-sample-average">Sample Mean or Sample Average</a></li>
+  <li><a href="#sample-variance-and-dtandard-deviation" id="toc-sample-variance-and-dtandard-deviation" class="nav-link" data-scroll-target="#sample-variance-and-dtandard-deviation">Sample Variance and Dtandard Deviation</a></li>
+  </ul></li>
+  <li><a href="#calculation-of-parameters" id="toc-calculation-of-parameters" class="nav-link" data-scroll-target="#calculation-of-parameters">Calculation of Parameters</a>
+  <ul class="collapse">
+  <li><a href="#mean-or-average-of-the-population" id="toc-mean-or-average-of-the-population" class="nav-link" data-scroll-target="#mean-or-average-of-the-population">Mean or average of the population</a></li>
+  <li><a href="#variance-and-standard-deviation-of-the-population" id="toc-variance-and-standard-deviation-of-the-population" class="nav-link" data-scroll-target="#variance-and-standard-deviation-of-the-population">Variance and Standard Deviation of the Population</a></li>
+  </ul></li>
+  <li><a href="#distributions" id="toc-distributions" class="nav-link" data-scroll-target="#distributions">Distributions</a>
+  <ul class="collapse">
+  <li><a href="#sampling-mean-distribution" id="toc-sampling-mean-distribution" class="nav-link" data-scroll-target="#sampling-mean-distribution">Sampling Mean Distribution</a></li>
+  <li><a href="#the-normal-distribution" id="toc-the-normal-distribution" class="nav-link" data-scroll-target="#the-normal-distribution">The normal distribution</a></li>
+  <li><a href="#students-t-distribution" id="toc-students-t-distribution" class="nav-link" data-scroll-target="#students-t-distribution">Student’s t distribution</a></li>
+  </ul></li>
+  <li><a href="#central-limit-theorem" id="toc-central-limit-theorem" class="nav-link" data-scroll-target="#central-limit-theorem">Central Limit Theorem</a></li>
+  <li><a href="#statistical-inference" id="toc-statistical-inference" class="nav-link" data-scroll-target="#statistical-inference">Statistical Inference</a></li>
+  <li><a href="#key-points" id="toc-key-points" class="nav-link" data-scroll-target="#key-points">Key points</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<p><em>Perfection is always impossible; always it’s an approximation</em></p>
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Formally, <a href="https://www.sciencedirect.com/topics/neuroscience/statistical-inference" target="_blank">statistical inference</a> can be defined as the process by which conclusions are drawn about a population based on values calculated from a sample drawn from that population.</p>
+<p>If your work is related to science in any of its branches I am sure you know that statistical inference plays an important role in the exploration, analysis and validation of our experimental results. A statement is often used as evidence that you have succeeded in testing some hypothesis derived from your research: <em>these results show significant differences with a p-value &lt; 0.05</em>.</p>
+<p>In this post I will explain some concepts related to statistical inference and how it can be illustrated using R code.</p>
+</section>
+<section id="populations-samples-parameters-and-statistics" class="level1">
+<h1>Populations, Samples, Parameters and Statistics</h1>
+<p>According to <a href="https://dictionary.cambridge.org/es/diccionario/ingles/inference" target="_blank">Cambridge Dictionary</a> , an inference is an assumption that is made or an opinion that is formed from available information. In statistics, the purpose of an inference is to draw conclusions about the population from a sample.</p>
+<p>The <em>population</em> is the complete set of objects of interest to us. For example, we may be interested in all the trees of a species located in a forest, all the people in a city, or even the elements of a continuous process such as the cookies produced in a factory. It is important to keep in mind that most of the time we do not have access to the entire population because it is too large and it would be impractical to analyze each element or because the population can be considered a continuum as in the cookie factory.</p>
+<p>Statistical inference can help us when we do not have all the information of a population. The first step is to take some elements of this population, which we call a <em>sample</em>. For this we must ensure that the sampling process guarantees that each element of the population has an equal chance of being selected.</p>
+<p>Once we obtain the sample we may be interested in some property of the population, so we proceed to measure this characteristic in each element of the sample. This property can be the height, the expression of some gene, the amount of sugar, the hardness, etc. Then, a number is calculated that summarizes the characteristic measured across all elements of the sample. These numbers are usually the mean, variance and standard deviation, which together are called <em>statistics</em>.</p>
+<p>Finally, with some assumptions, the population <em>parameters</em> can be inferred from the statistics. The parameters are the mean, standard deviation and variance of the entire population.</p>
+<p>See the following figure where I illustrate the whole process with cookies:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../..\posts/statistical-inference/statistical_inference.jpg" class="img-fluid figure-img" width="800"></p>
+</figure>
+</div>
+<p>Depending on the measured characteristic or property different inference methods may be required. In this explanation I will only work with numbers on a continuous scale.</p>
+</section>
+<section id="calculation-of-statistics" class="level1">
+<h1>Calculation of Statistics</h1>
+<p>It is time to do some calculations with R code. First I will define a simulated population of 1500 values. Suppose we have measured all the heights of a given tree species:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">34</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>population_trees <span class="ot">&lt;-</span> <span class="fu">round</span>(<span class="fu">rnorm</span>(<span class="dv">1500</span>, <span class="at">mean =</span> <span class="dv">15</span>, <span class="at">sd =</span> <span class="dv">4</span>), <span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>To simulate the values I used the <code>rnorm()</code> function, which returns random values from a normal distribution with a given mean and standard deviation. The <code>round()</code> function rounds the values to the given number of significant figures, and finally the <code>set.seed()</code> function ensures that we always get the same results from this and other code chunks, so if you decide to reproduce them on your own computer the results should also be the same.</p>
+<p>Next, let’s take a sample of 30 elements from our simulated population:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">12</span>)</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sample_trees <span class="ot">&lt;-</span> <span class="fu">sample</span>(population_trees, <span class="at">size =</span> <span class="dv">30</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sample_trees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] 11.89  9.95 12.65 19.30 12.51 21.27 15.75 12.46 18.07 14.08 15.30 20.11
+[13] 10.78 17.12 14.09 14.57 16.02 14.89 13.87 18.05 14.37 17.60 14.55 23.41
+[25] 11.80 14.35 15.52 19.99 14.00 18.24</code></pre>
+</div>
+</div>
+<p>Note that the <code>sample()</code> function takes the elements of the given data set randomly, so I also used the <code>set.seed()</code> function to ensure the reproducibility of this example.</p>
+<section id="sample-mean-or-sample-average" class="level2">
+<h2 class="anchored" data-anchor-id="sample-mean-or-sample-average">Sample Mean or Sample Average</h2>
+<p>We can calculate the sample mean with the following equation:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../..\posts/statistical-inference/mean_s.png" class="img-fluid figure-img" width="150"></p>
+</figure>
+</div>
+<p>The above is the sum (<em>summation</em>) of all the measurements in the sample divided by the sample size (<em>n</em>). <em>i</em> is the index of each item or measurement.</p>
+<p>With R code in our previous sample:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>ms_trees <span class="ot">&lt;-</span> <span class="fu">sum</span>(sample_trees) <span class="sc">/</span> <span class="fu">length</span>(sample_trees)</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>ms_trees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15.552</code></pre>
+</div>
+</div>
+<p>We can directly use the <code>mean()</code> function with our data to calculate the mean:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(sample_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15.552</code></pre>
+</div>
+</div>
+</section>
+<section id="sample-variance-and-dtandard-deviation" class="level2">
+<h2 class="anchored" data-anchor-id="sample-variance-and-dtandard-deviation">Sample Variance and Dtandard Deviation</h2>
+<p>For the sample variance you use the next equation:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../..\posts/statistical-inference/variance_s.png" class="img-fluid figure-img" width="265"></p>
+</figure>
+</div>
+<p>This is described as the sum of the differences between each sample measurement and the sample mean. Each difference is squared, so negative and positive differences do not cancel each other out. The sum is then divided by the sample size minus one.</p>
+<p>With R code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>vs_trees <span class="ot">&lt;-</span> <span class="fu">sum</span>((sample_trees <span class="sc">-</span> ms_trees)<span class="sc">^</span><span class="dv">2</span>) <span class="sc">/</span> (<span class="fu">length</span>(sample_trees) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>vs_trees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10.32456</code></pre>
+</div>
+</div>
+<p>If you are wondering why we have divided by n - 1, I can briefly tell you that this way offers the best estimation of the population variance. You can also check out the next page: <a href="https://www.willemsleegers.com/post/2020/08/05/why-divide-by-n-1/" target="_blank">Why divide by N - 1 when calculating the variance of a sample?</a>.</p>
+<p>To obtain the standard deviation, it is sufficient to calculate the square root of the variance, thus providing a measure of the dispersion of the sample in the original units of measurement:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ss_trees <span class="ot">&lt;-</span> <span class="fu">sqrt</span>(vs_trees)</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>ss_trees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.213186</code></pre>
+</div>
+</div>
+<p>As in the case of the mean, with R code we can obtain the variance and standard deviation directly with the <code>var()</code> and <code>sd()</code> functions, respectively:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Sample varianza</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="fu">var</span>(sample_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 10.32456</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard deviation </span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(sample_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.213186</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="calculation-of-parameters" class="level1">
+<h1>Calculation of Parameters</h1>
+<p>If you have all the data for a population, we can also directly calculate the mean, variance and standard deviation.</p>
+<section id="mean-or-average-of-the-population" class="level2">
+<h2 class="anchored" data-anchor-id="mean-or-average-of-the-population">Mean or average of the population</h2>
+<p>To calculate population mean we use the next equation:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="mean_p.png" class="img-fluid figure-img" width="141"></p>
+</figure>
+</div>
+<p>You can see that this equation is quite similar to the sample mean, but here <em>N</em> refers to all elements of the population. Let’s calculate the mean in our simulated data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>mp_trees <span class="ot">&lt;-</span> <span class="fu">sum</span>(population_trees) <span class="sc">/</span> <span class="fu">length</span>(population_trees)</span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>mp_trees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14.89803</code></pre>
+</div>
+</div>
+<p>Instead of the previous operation you can use the <code>mean()</code> function with the same purpose:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(population_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14.89803</code></pre>
+</div>
+</div>
+</section>
+<section id="variance-and-standard-deviation-of-the-population" class="level2">
+<h2 class="anchored" data-anchor-id="variance-and-standard-deviation-of-the-population">Variance and Standard Deviation of the Population</h2>
+<p>The equation for population variance:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="variance_p.png" class="img-fluid figure-img" width="282"></p>
+</figure>
+</div>
+<p>Note that here we divide by the total population size <em>N</em>, not by <em>n-1</em> as in the sampling variance. Let us calculate this parameter in our previous data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sum_square <span class="ot">&lt;-</span> <span class="fu">sum</span>((population_trees <span class="sc">-</span> <span class="fu">mean</span>(population_trees))<span class="sc">^</span><span class="dv">2</span>)</span>
+<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>pv_trees <span class="ot">&lt;-</span> sum_square <span class="sc">/</span> <span class="fu">length</span>(population_trees)</span>
+<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>pv_trees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15.39988</code></pre>
+</div>
+</div>
+<p>The base functions of R do not have one that calculates the population variance, but this can be solved by multiplying the value obtained with var()by (n-1)/n:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>varp_trees <span class="ot">&lt;-</span> <span class="fu">var</span>(population_trees)</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>varp_trees <span class="ot">&lt;-</span> varp_trees <span class="sc">*</span> (<span class="fu">length</span>(population_trees) <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">/</span> <span class="fu">length</span>(population_trees)</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>varp_trees</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15.39988</code></pre>
+</div>
+</div>
+<p>To calculate the standard deviation it would be sufficient to obtain the square root of the previous value:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(varp_trees)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 3.924268</code></pre>
+</div>
+</div>
+<p>Note that the population mean and standard deviation are close to those specified in the code we used to simulate the data <code>rnorm(1500, mean = 15, sd = 4)</code>.</p>
+</section>
+</section>
+<section id="distributions" class="level1">
+<h1>Distributions</h1>
+<p>A probability distribution is a function (a table, an equation or a graph) that relates all possible values in a population to their frequencies, counts or probabilities of occurrence.</p>
+<p>To illustrate the above let’s simulate a population of 1000 cookies, where we are interested in the diameter of each cookie. The frequency distribution of the diameter would look like this:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Packages</span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5</span>) <span class="co"># For reproducibility</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Diameter data from a normal distribution</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>diameter <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">1000</span>, <span class="at">mean =</span> <span class="dv">5</span>, <span class="at">sd =</span> <span class="fl">0.4</span>)  <span class="co"># mean = 5 cm</span></span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a>diameter <span class="ot">&lt;-</span> <span class="fu">tibble</span>(<span class="at">D =</span> diameter)</span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram </span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>freq_hist <span class="ot">&lt;-</span> diameter <span class="sc">%&gt;%</span> </span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> D)) <span class="sc">+</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">binwidth =</span> <span class="fl">0.2</span>) <span class="sc">+</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Diameter (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() </span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>freq_hist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/cookies distribution-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Although in many cases we will not have all the data from a population, the concept of probability distribution is still important in statistical inference. This is because we can assume that our data come from a theoretical distribution and then test whether the sample statistics belong to that distribution.</p>
+<section id="sampling-mean-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="sampling-mean-distribution">Sampling Mean Distribution</h2>
+<p>The concept of distribution can also be applied to statistics such as the mean. To illustrate the above for our population of cookies let’s repeatedly take samples of size 5 and make a histogram with the averages of these samples:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">151</span>) <span class="co"># For reproducibility</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a><span class="co"># 1000 samples</span></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a>n_samples <span class="ot">&lt;-</span> <span class="dv">1000</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Empty vector where all means will be stored </span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>mean_cookies <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"numeric"</span>, <span class="at">length =</span> n_samples)</span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Take a random sample of size 5, calculate the mean and save it in previous vector</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Repeat the process 1000 times</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span>n_samples) {</span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  mean_cookies[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sample</span>(diameter<span class="sc">$</span>D, <span class="at">size =</span> <span class="dv">5</span>)) </span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb27-14"><a href="#cb27-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-15"><a href="#cb27-15" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a data frame with all means from samples of size 5</span></span>
+<span id="cb27-16"><a href="#cb27-16" aria-hidden="true" tabindex="-1"></a>mean_cookies <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">mean_n5 =</span> mean_cookies)</span>
+<span id="cb27-17"><a href="#cb27-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-18"><a href="#cb27-18" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram</span></span>
+<span id="cb27-19"><a href="#cb27-19" aria-hidden="true" tabindex="-1"></a>freq_hist_mean <span class="ot">&lt;-</span> mean_cookies <span class="sc">%&gt;%</span> </span>
+<span id="cb27-20"><a href="#cb27-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> mean_n5)) <span class="sc">+</span></span>
+<span id="cb27-21"><a href="#cb27-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>, <span class="at">binwidth =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb27-22"><a href="#cb27-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Diameter (cm)"</span>) <span class="sc">+</span></span>
+<span id="cb27-23"><a href="#cb27-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb27-24"><a href="#cb27-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() </span>
+<span id="cb27-25"><a href="#cb27-25" aria-hidden="true" tabindex="-1"></a>freq_hist_mean</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/mean cookies distribution-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The previous code can be repeated with other sample sizes and this will be important in a later section (<em>Central Limit Theorem</em>).</p>
+</section>
+<section id="the-normal-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="the-normal-distribution">The normal distribution</h2>
+<p>Since it is rare to know the actual distribution of data, we have to resort to theoretical distributions. There are a lot of such distributions and undoubtedly the <em>normal distribution</em> is the most important in statistical inference. This distribution applies to continuous data (length, weight, temperature, etc.) and is defined by the following equation:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="normal_eq.png" class="img-fluid figure-img" width="285"></p>
+</figure>
+</div>
+<p>A graph of the above equation looks like this (with mean equal to zero and standard deviation equal to one):</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/normal plot-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+</section>
+<section id="students-t-distribution" class="level2">
+<h2 class="anchored" data-anchor-id="students-t-distribution">Student’s t distribution</h2>
+<p>When sample sizes are small and the true standard deviation of the population is not known, <em>Student’s t-distribution</em> can be used to make a good guess of the distribution of the data. The shape of this distribution depends on the sample size and for large sample sizes the t-distribution tends to be normal:</p>
+<div class="cell" data-layout-align="center">
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/t distributions-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>The black line corresponds to a sample size of 2, the red line to a sample size of 4, the blue one to a size of 10, and the green one to a size of 50.</p>
+</section>
+</section>
+<section id="central-limit-theorem" class="level1">
+<h1>Central Limit Theorem</h1>
+<p>The central limit theorem states that even if the original data do not follow a normal distribution, the sampling distribution of the mean of the data will tend to follow a normal distribution when the sample size is large enough.</p>
+<p>To illustrate this theorem let’s simulate data from a non-normal distribution:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">51</span>)</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Simulate data from a uniform distribution</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>non_normal_data <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">x =</span> <span class="fu">runif</span>(<span class="dv">10000</span>, <span class="at">max =</span> <span class="dv">100</span>)) </span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Histogram</span></span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>non_normal_hist <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(non_normal_data, <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>non_normal_hist</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/data non-normal-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Now let’s take 1000 samples of size 2, calculate their means, and made a histogram with all these means:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">15</span>)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>mean_n2 <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"numeric"</span>, <span class="at">length =</span> <span class="dv">1000</span>)</span>
+<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>) {</span>
+<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>  mean_n2[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sample</span>(non_normal_data<span class="sc">$</span>x, <span class="at">size =</span> <span class="dv">2</span>))</span>
+<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>hist_n2 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x =</span> mean_n2), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb29-10"><a href="#cb29-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb29-11"><a href="#cb29-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Mean value (n = 2)"</span>) <span class="sc">+</span></span>
+<span id="cb29-12"><a href="#cb29-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb29-13"><a href="#cb29-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-14"><a href="#cb29-14" aria-hidden="true" tabindex="-1"></a>hist_n2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/n5 means-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>We can repeat the same process with samples of size 10:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">15</span>)</span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>mean_n10 <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"numeric"</span>, <span class="at">length =</span> <span class="dv">1000</span>)</span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>) {</span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>  mean_n10[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sample</span>(non_normal_data<span class="sc">$</span>x, <span class="at">size =</span> <span class="dv">10</span>))</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>hist_n10 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x =</span> mean_n10), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Mean value (n = 10)"</span>) <span class="sc">+</span></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>hist_n10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/n10 means-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>Then with samples of size 30:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">13</span>)</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-3"><a href="#cb31-3" aria-hidden="true" tabindex="-1"></a>mean_n30 <span class="ot">&lt;-</span> <span class="fu">vector</span>(<span class="st">"numeric"</span>, <span class="at">length =</span> <span class="dv">1000</span>)</span>
+<span id="cb31-4"><a href="#cb31-4" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> (i <span class="cf">in</span> <span class="dv">1</span><span class="sc">:</span><span class="dv">1000</span>) {</span>
+<span id="cb31-5"><a href="#cb31-5" aria-hidden="true" tabindex="-1"></a>  mean_n30[i] <span class="ot">&lt;-</span> <span class="fu">mean</span>(<span class="fu">sample</span>(non_normal_data<span class="sc">$</span>x, <span class="at">size =</span> <span class="dv">30</span>))</span>
+<span id="cb31-6"><a href="#cb31-6" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb31-7"><a href="#cb31-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-8"><a href="#cb31-8" aria-hidden="true" tabindex="-1"></a>hist_n30 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="at">data =</span> <span class="fu">data.frame</span>(<span class="at">x =</span> mean_n30), <span class="fu">aes</span>(x)) <span class="sc">+</span></span>
+<span id="cb31-9"><a href="#cb31-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">color =</span> <span class="st">"black"</span>, <span class="at">fill =</span> <span class="st">"white"</span>) <span class="sc">+</span></span>
+<span id="cb31-10"><a href="#cb31-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb31-11"><a href="#cb31-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Mean value (n = 30)"</span>) <span class="sc">+</span></span>
+<span id="cb31-12"><a href="#cb31-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb31-13"><a href="#cb31-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb31-14"><a href="#cb31-14" aria-hidden="true" tabindex="-1"></a>hist_n30</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/n30 means-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>It can be observed that as the sample size increases the distribution of the mean tends to adopt a bell shape. That is, the distribution of the mean tends to normality as we increase the sample size. Note also how all distributions of the mean are centered around the mean of the original data:</p>
+<div class="cell" data-layout-align="center">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr) <span class="co"># Arrange multiple ggplots on the same figure</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>hist_means <span class="ot">&lt;-</span> <span class="fu">ggarrange</span>(non_normal_hist, hist_n2, hist_n10, hist_n30)</span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>hist_means</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="index_files/figure-html/all means dist-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
+<p>What happens to the variance and standard deviation of the sampling distributions of the mean? These parameters decrease in each distribution as we increase the sample size. Let’s calculate the standard deviations:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>dist_sds <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>  <span class="at">Distribution =</span> <span class="fu">c</span>(<span class="st">"Non normal"</span>, <span class="st">"n = 2"</span>, <span class="st">"n = 10"</span>, <span class="st">"n = 30"</span>),</span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">SD =</span> <span class="fu">c</span>(<span class="fu">sd</span>(non_normal_data<span class="sc">$</span>x), <span class="fu">sd</span>(mean_n2), <span class="fu">sd</span>(mean_n10), <span class="fu">sd</span>(mean_n30))</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>dist_sds</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  Distribution        SD
+1   Non normal 28.954840
+2        n = 2 20.406067
+3       n = 10  9.225895
+4       n = 30  5.056629</code></pre>
+</div>
+</div>
+<p>The reduction of standard deviation values tends to be equal to dividing the standard deviation of the original data by the square root of the sample size (this value is also known as the <em>standard error</em>):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard deviation for samples of size 2</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(non_normal_data<span class="sc">$</span>x) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 20.47416</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb37"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard deviation for samples of size 10</span></span>
+<span id="cb37-2"><a href="#cb37-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(non_normal_data<span class="sc">$</span>x) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">10</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 9.156324</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb39"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard deviation for samples of size 30</span></span>
+<span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a><span class="fu">sd</span>(non_normal_data<span class="sc">$</span>x) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="dv">30</span>)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5.286406</code></pre>
+</div>
+</div>
+<p>Thus, the central limit theorem allows us to use statistical methods based on a normal distribution with data from non-normal distributions.</p>
+</section>
+<section id="statistical-inference" class="level1">
+<h1>Statistical Inference</h1>
+<p>It is time to put into practice the concepts we have covered so far. We are going to work with a sample of size 10 drawn from the non-normal distribution we simulated in the previous section. The objective is to infer whether the population mean is equal to 30 based on the sample mean we obtain.</p>
+<p>First, we take the sample and calculate its mean:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">92</span>)</span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a>sample_n10 <span class="ot">&lt;-</span> <span class="fu">sample</span>(non_normal_data<span class="sc">$</span>x, <span class="at">size =</span> <span class="dv">10</span>)</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a>mean_n10   <span class="ot">&lt;-</span> <span class="fu">mean</span>(sample_n10)</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a>mean_n10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 53.70605</code></pre>
+</div>
+</div>
+<p>As a next step we standardize this value in order to compare it with the values of a theoretical distribution. This calculation is performed by subtracting the hypothetical population mean (30) from the sample mean we obtained. The result of the above subtraction is then divided by the standard error:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>st_error  <span class="ot">&lt;-</span> <span class="fu">sd</span>(sample_n10) <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">length</span>(sample_n10))</span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>stand_n10 <span class="ot">&lt;-</span> (mean_n10 <span class="sc">-</span> <span class="dv">30</span>) <span class="sc">/</span> st_error</span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>stand_n10</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2.458524</code></pre>
+</div>
+</div>
+<p>Suppose we do not have all the values of the simulated population, but we do have the values of a Student’s t-distribution with mean 30 and an error or standard deviation equal to that of our sample:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb45"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>x_vals <span class="ot">&lt;-</span> <span class="fu">seq</span>(<span class="dv">0</span>, <span class="dv">1</span>, <span class="at">by =</span> <span class="fl">0.001</span>)</span>
+<span id="cb45-2"><a href="#cb45-2" aria-hidden="true" tabindex="-1"></a>data_t <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">t_vals =</span> <span class="fu">qt</span>(x_vals, <span class="at">df =</span> <span class="dv">9</span>))</span>
+<span id="cb45-3"><a href="#cb45-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_t, <span class="fu">aes</span>(t_vals)) <span class="sc">+</span></span>
+<span id="cb45-4"><a href="#cb45-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_histogram</span>(<span class="at">fill =</span> <span class="st">"steelblue1"</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb45-5"><a href="#cb45-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"t values"</span>) <span class="sc">+</span></span>
+<span id="cb45-6"><a href="#cb45-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Count"</span>) <span class="sc">+</span></span>
+<span id="cb45-7"><a href="#cb45-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: Removed 2 rows containing non-finite values (`stat_bin()`).</code></pre>
+</div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/t distribution-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>In this example the <code>qt()</code> function generates standardized values by default, so no additional operations have to be performed.</p>
+<p>Now let us ask the question: What proportion of values in the t distribution are greater than the standardized value of our sample? We can answer with the following code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb47"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb47-1"><a href="#cb47-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sum</span>(<span class="fu">abs</span>(data_t<span class="sc">$</span>t_vals) <span class="sc">&gt;=</span> stand_n10) <span class="sc">/</span> <span class="fu">length</span>(data_t<span class="sc">$</span>t_vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 0.03796204</code></pre>
+</div>
+</div>
+<p>Only a small proportion of all values in the theoretical distribution are larger, in absolute terms, than the mean we obtained, so we could infer that the population mean we are interested in is other than 30.</p>
+<p>All of the above can be done with the <code>t.test()</code> function and our sample data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb49"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb49-1"><a href="#cb49-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t.test</span>(sample_n10, <span class="at">alternative =</span> <span class="st">"two.sided"</span>, <span class="at">mu =</span> <span class="dv">30</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>
+    One Sample t-test
+
+data:  sample_n10
+t = 2.4585, df = 9, p-value = 0.03625
+alternative hypothesis: true mean is not equal to 30
+95 percent confidence interval:
+ 31.89345 75.51865
+sample estimates:
+mean of x 
+ 53.70605 </code></pre>
+</div>
+</div>
+<p>The ratio we calculated previously is better known as <em>p-value</em>. Note how the value obtained by the <code>t.test()</code> function is quite similar.</p>
+<p>It is also important to note that the argument <code>alternative = "two.sided"</code> in the <code>t.test()</code> function refers to a <em>two-tailed hypothesis test</em>. That is, sufficiently large or sufficiently small sample means will lead us to conclude that the population mean is different from 30. For this reason I used the <code>abs()</code> function in the proportion calculation to include the negative and positive values of the t distribution whose absolute values were greater than the standardized sample value.</p>
+<p>How small must the proportion of values in the theoretical distribution be to infer that our statistic is not part of that distribution? A general and widely accepted rule of thumb is usually set at a proportion of 0.05. In other words, if our <em>p-value</em> is less than 0.05 we can conclude that the population mean is significantly different from the hypothesized value.</p>
+</section>
+<section id="key-points" class="level1">
+<h1>Key points</h1>
+<ul>
+<li>Statistical inference allows us to make inferences about the parameters of a population based on statistics calculated from a sample.</li>
+<li>For data on a continuous measurement scale, statistics such as mean, variance and standard deviation are usually calculated. With R code it is possible to calculate these statistics with <code>mean()</code>, <code>var()</code> and <code>sd()</code> functions.</li>
+<li>A probability distribution relates the possible values of a population to their frequencies, counts or probabilities of occurrence.</li>
+<li>The central limit theorem states that the sampling distribution of the mean tends to be normal when the sample size is large enough, even if the original data do not follow a normal distribution.</li>
+<li>The <code>t.test()</code> function can be used to make inferences about the population mean based on sample data.</li>
+<li>As a rule of thumb, if the obtained <em>p-value</em> is less than 0.05 we can state that the population mean is different from some hypothetical value.</li>
+</ul>
+<p>The code on this post is licensed under the <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="http://creativecommons.org/licenses/by/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

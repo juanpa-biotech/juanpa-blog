@@ -1,0 +1,43 @@
+---
+title: "About the author"
+image: jpch_photo.jpg
+about:
+  template: solana
+  links:
+    - icon: twitter
+      text: Twitter
+      href: https://twitter.com/juanpa_biotech
+    - icon: linkedin
+      text: LinkedIn
+      href: https://mx.linkedin.com/in/juan-pablo-carre%C3%B3n-hidalgo-667567a1
+    - icon: github
+      text: Github
+      href: https://github.com/juanpa-biotech
+---
+
+Hello! Welcome to my personal blog.
+
+My name is Juan Pablo. I have a PhD in Biotechnology from the *Universidad Autónoma Universidad Autónoma Metropolitana*.
+
+In this blog I write about various topics of my interest such as data analysis and science in general. I hope you find it useful.
+
+You can contact me through my email or my social networks:
+
+jpch_26\@outlook.com\
+jpch_biotech\@outlook.com\
+[LinkedIn](https://www.linkedin.com/in/juan-pablo-carre%C3%B3n-hidalgo-667567a1/)\
+[Twitter](https://twitter.com/juanpa_biotech)
+
+My certifications:
+
+[The R Programming Environment](https://www.coursera.org/account/accomplishments/verify/D3F8AZC6H3XS)\
+[Introducción a Data Science: Programación Estadística con R](https://www.coursera.org/account/accomplishments/verify/UCN237DRT5F6)\
+[Programming in R for Data Science](https://courses.edx.org/certificates/d9c1d41c4e4a4dccb2d94173ad4531bb)\
+[Experimentation for Improvement](https://www.coursera.org/account/accomplishments/verify/HDQWY8BTLYQE)\
+[Professional Certificate: Data Analysis for Life Sciences](https://credentials.edx.org/credentials/9a960e8e8f9b42a39bb4695935dd7031/)
+
+I have also published some scientific articles, which can be consulted in my profile at [Scholar Google](https://scholar.google.com.mx/citations?user=O7qScyUAAAAJ&hl=es).
+
+All text, code and data in the tutorials are freely available under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/).
+
+Thank you so much for visiting my blog! 🤓
