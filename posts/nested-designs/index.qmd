@@ -1,0 +1,229 @@
+---
+title: "R Tutorial: Analysis of results of a nested experimental design"
+categories: ["R", "tutorial","statistical inference", "nested design"]
+date: "2023-10-11"
+description: 'A tutorial with R code for analyzing the results of nested designs'
+toc: true
+toc-location: left
+---
+
+# What is a nested design?
+
+A *nested design* is a type of experimental design in which the levels of one factor are hierarchically nested within the levels of another factor. For example, let's imagine that we are interested in the effect of a type of drug on the expression of a specific gene. For this we design a nested experiment with mice as experimental units (in the figure two mice per treatment), where we include a control. From each mouse we took three cells and in each one we evaluated the expression of the gene twice (technical repetitions).
+
+![](images/nested_design.jpg){fig-align="center" width="500"}
+
+As shown in the figure, our design has a hierarchical appearance.
+
+In this type of design we distinguish between two types of factors: *fixed* and *random*. A fixed factor is one that has discrete or finite values, while a random factor can take many values. In our example the drug factor would be considered a fixed factor and the mouse, cell and repeated measurements factors would be considered random factors. Note how the random factors are similar, such as mouse and cell, but not identical to each other and these are successively nested until the fixed factor drug.
+
+Now let's see how we can analyze the results of this type of experimental design with the help of R code. It is important to mention that I took as a basis the publication in *nature methods*: <a href="https://www.nature.com/articles/nmeth.3137" target="_blank">Nested designs</a> and replicated the example shown using, of course, R code. In addition, I added an extra drug and performed a multiple comparisons test to establish significant differences between the means of each treatment.
+
+If you are interested about how I simulated the data, please take a look at the code in the data_simulation script found in the repository of this tutorial: (link).
+
+# Packages
+
+For the visualization of the results I used `ggplot2` package and for the statistical analysis I used the `GAD`, `lme4`, `multicomp` and `agricolae` packages. To install them you can run the following line of code:
+
+```{r packages, eval=FALSE}
+install.packages(c("ggplot2", "GAD", "lme4", "multcomp", "agricolae"))
+```
+
+Once installed, it is important not to forget to load these packages in your R session:
+
+```{r load packages, message=FALSE, warning=FALSE}
+library(ggplot2)
+library(GAD)
+library(lme4)
+library(multcomp)
+library(agricolae)
+```
+
+# Data import
+
+The data for this tutorial are in the repository <a href="https://github.com/juanpa-biotech/nested-designs/tree/master" target="_blank">nested-designs</a> and you can import with the `read_csv()` function from `readr` package. If you have not installed this package, first run the following line of code:
+
+```{r install readr, eval=FALSE}
+install.packages("readr")
+```
+
+Then we load readr in our session and import the data directly from the repository of this post:
+
+```{r load readr, message=FALSE, warning=FALSE}
+library(readr)
+mice_data <- read_csv("https://raw.githubusercontent.com/juanpa-biotech/nested-designs/master/mice_data.csv")
+```
+
+We can use the `head()` function to display the first rows of our data frame:
+
+```{r head mice_data}
+head(mice_data)
+```
+
+The *tech_rep* column corresponds to technical replicates, *A* indicates the drug factor levels, *B* the mouse factor levels and *C* the cell factor levels. For this example, five mice were used for the control and for each type of drug and five cells were taken from each.The *expr* column has the expression level data for each treatment, mouse, cell and technical replicate.
+
+In R Studio, it is also possible to display the data in a separate window with the `View()` function. Try running `View(mice_data)` in your console and see what happens.
+
+# Visualization of experimental results
+
+As a first step we add three new columns to the data. If you have not installed the `dplyr` package, first run `install.packages(dplyr)`:
+
+```{r three new columns, message=FALSE, warning=FALSE}
+library(dplyr)
+mice_data2 <- mice_data %>% 
+  mutate(
+    A       = as.factor(A),
+    group_a = rep(c(13, 38, 63), each = 75),            # Drug kind
+    group_b = rep(seq(3, 73, by = 5), each = 15),       # Mice  
+    group_c = rep(1:75, each = 3)                       # Cells 
+  )
+```
+
+The added columns will serve to indicate the position of some statistics (means) for each factor on the x-axis of our graph. I saved the result of this operation in a new object, so we keep the original data intact.
+
+`ggpplot2` allows us to build our visualizations by layers, so to build complex plots we simply make simple layers and "stack" them. First we generate a dot plot of the expression levels with respect to group *C* (cells) and add a horizontal line indicating the mean within each group of measurements:
+
+```{r first layer plot}
+expr_plot <- ggplot(mice_data2, aes(x = group_c, y = expr)) +
+  geom_point(aes(color = A), size = 1) +
+  stat_summary(
+    fun = mean, geom = "crossbar", width = 0.5, color = "black", linewidth = 0.3
+  )
+expr_plot 
+```
+
+In the previous graph each group of three points represents the technical repetitions made in each cell.
+
+Now let's add an extra layer with red horizontal lines representing the expression means of each mouse:
+
+```{r second layer plot}
+expr_plot <- expr_plot +
+  stat_summary(
+    aes(x = group_b, y = expr),
+    fun = mean, geom = "crossbar", width = 4.5, color = "red", linewidth = 0.3
+  )
+expr_plot
+```
+
+As a third layer we add horizontal lines representing the expression means for each treatment, that is, the expression results of each mouse averaged at each drug type and the control:
+
+```{r third layer plot}
+expr_plot <- expr_plot +
+   stat_summary(
+    aes(x = group_a, y = expr), 
+    fun = mean, geom = "crossbar", width = 25, color = "blue", linewidth = 0.3
+  )
+expr_plot
+```
+
+Finally, let's customize the appearance of the chart a bit by modifying font and font sizes, and editing the text of each axis:
+
+```{r plot appearance, warning=FALSE}
+expr_plot <- expr_plot +
+  scale_x_continuous(breaks = c(13, 38, 63), labels = c("", "", "")) +
+  labs(color = " ", y = "Expression", x = " ") +
+  scale_color_discrete(labels = c("Control", "Drug 1", "Drug 2")) +
+  theme_classic() +
+  theme(
+    axis.title.y = element_text(face = "bold", color = "black", size = rel(1.2)),
+    axis.text.y  = element_text(color = "black", size = rel(1.2))
+  )
+expr_plot
+```
+
+One way to export our graph in some format is by using the `ggsave()` function. Try running the following line of code and see what happens:
+
+```{r save plot, eval=FALSE, message=FALSE, warning=FALSE}
+ggsave("expr_plot.jpeg", plot = expr_plot)
+```
+
+# Inferential statistical analysis
+
+## ANOVA Table
+
+As can be seen in our graph, there seems to be a difference between the effect of drug 2 with the other two levels of this factor (drug 1 and control). We can define if there are significant differences by means of an ANOVA table and subsequently a multiple comparisons test.
+
+Let's obtain the ANOVA table with the `GAD` package, first we have to specify the fixed and random factors:
+
+```{r gad factors}
+drug <- as.fixed(mice_data$A)
+mice <- as.random(mice_data$B)
+cell <- as.random(mice_data$C)
+```
+
+To fit the linear model we must take into account the relationship between our response and the previously specified factors:
+
+```{r gad lineal model}
+data_aov <- aov(
+  expr ~ drug + mice:drug + cell:mice:drug,
+  data = mice_data
+  )
+```
+
+The term `mice:drug` denotes the variability of mice within each treatment, and the term `cell:mice:drug` denotes the variability of cells within each mouse and in turn within each treatment.
+
+To display the ANOVA table we use the `gad()` function:
+
+```{r gad anova table}
+gad(data_aov)
+```
+
+The `gad()` function distinguishes between fixed and random effects, as well as the nested structure between these factors, so it makes corrections to calculate the *F-ratios*. The reason for this is that, depending on whether we are considering fixed or random effects, the expected values for the *error mean squares* (EM) change as follows:
+
+![](images/mean_squares.png){fig-align="center" width="350"}
+
+In the above equations it is possible to observe the nested structure in the mean squares. Also note how for the case of treatments ($MS_A$) the expected values add up to the contribution to the variation of mice and cells. Therefore, it is necessary to divide $MS_A$ by $MS_B$ to obtain the F-ratio and infer differences between treatments.
+
+Importantly, in the case of technical replicates the variability of this random factor is properly estimated by the mean square of the `Residual` term in our ANOVA table.
+
+## Estimation of the variability of each factor
+
+When dealing with random factors, we are mainly interested in estimating their contribution to the variability of the response, as opposed to fixed factors where we are interested in estimating their effect on the population mean.
+
+With the `lme4` package we can estimate the contribution to variability of mice, cells and properly the error term (technical replicates). First we need to convert the data type in columns *A*, *B* and *C* into factors and then use the `lmer()` function as follows:
+
+```{r variability lmer}
+mice_data3 <- mice_data %>% 
+  mutate(A = as.factor(A), B = as.factor(B), C = as.factor(C))
+
+data_lme <- lmer(expr ~ 1 + A + (1|B:A) + (1|C:B:A), data = mice_data3)
+```
+
+Note that fitting the linear model with the `lmer()` function requires a somewhat different syntax than that used with `aov()` and `gad()`. To show the contribution to variability of each factor we use the `summary()` function with the `data_lme` object as argument:
+
+```{r lmer summary}
+summary(data_lme)
+```
+
+Under `Random effects` the term `Residual` refers to technical replicates, the term `B:A` to mice and the term `C:B:A` to cells.
+
+## Multiple comparisons
+
+The `glth()` function of the `multcomp` package can be used to perform the multiple comparison test:
+
+```{r multcomp}
+mult_drug <- glht(data_lme, linfct = mcp(A = "Tukey"))
+summary(mult_drug)
+```
+
+Alternatively or additionally it is also possible to use the `HSD.test()` function of the `agricolae` package. For this I specified the mean squared error for mice (29.05) as well as the degrees of freedom for this factor (12):
+
+```{r agricolae}
+tukey_hsd <- with(mice_data, HSD.test(expr, A, DFerror = 12, MSerror = 29.05))
+tukey_hsd$groups
+```
+
+According to the results of the above analyses, we can conclude that drug 2 significantly reduced the gene expression levels compared to drug 1 and the control.
+
+# Key points
+
+* A nested design is a type of experimental design in which the levels of one factor are hierarchically nested within the levels of another factor.
+* In this type of design, a distinction is made between fixed factors (which have discrete or finite values) and random factors (which can take many values). In the example, the drug factor was considered as fixed, while the mouse, cell and repeated measurements factors were considered random.
+* It is possible to use the `ggplot2` package to visualize the results of this type of design.
+* The `GAD` package was used to perform the analysis of variance of the results of this design.
+* The `lme4` package was used to estimate the contribution to variability of the random factors mice, cells and technical replicates.
+* Two methods for performing multiple comparisons tests were described, using the `multicomp` and `agricolae` packages.
+
+The code on this post is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)
+
+[![](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)

@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/nested-designs/index.html",
       "/posts/what-is-science/index.html",
       "/posts/statistical-inference/index.html"
     ]
