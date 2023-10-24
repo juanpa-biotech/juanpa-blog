@@ -2,6 +2,8 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/simultaneus_optimization/index.html",
+      "/posts/prickly-pear-fruits/index.html",
       "/posts/nested-designs/index.html",
       "/posts/what-is-science/index.html",
       "/posts/statistical-inference/index.html"
