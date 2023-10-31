@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2023-10-30">
+<meta name="description" content="How to perform PCA step by step using just basic linear algebra functions and operations">
+
+<title>Juan Pablo Carreón Hidalgo - R tutorial: Principal Component Analysis from scratch</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Juan Pablo Carreón Hidalgo</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About the author</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/juanpa-biotech" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/juanpa_biotech" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">R tutorial: Principal Component Analysis from scratch</h1>
+                  <div>
+        <div class="description">
+          How to perform PCA step by step using just basic linear algebra functions and operations
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">tutorial</div>
+                <div class="quarto-category">pca</div>
+                <div class="quarto-category">principal component analysis</div>
+                <div class="quarto-category">linear algebra</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">October 30, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-principal-component-analysis" id="toc-what-is-principal-component-analysis" class="nav-link active" data-scroll-target="#what-is-principal-component-analysis">What is principal component analysis?</a></li>
+  <li><a href="#a-simple-case-with-two-dimensional-data" id="toc-a-simple-case-with-two-dimensional-data" class="nav-link" data-scroll-target="#a-simple-case-with-two-dimensional-data">A simple case with two-dimensional data</a>
+  <ul class="collapse">
+  <li><a href="#packages" id="toc-packages" class="nav-link" data-scroll-target="#packages">Packages</a></li>
+  <li><a href="#data-simulation" id="toc-data-simulation" class="nav-link" data-scroll-target="#data-simulation">Data simulation</a></li>
+  <li><a href="#first-step-center-each-variable" id="toc-first-step-center-each-variable" class="nav-link" data-scroll-target="#first-step-center-each-variable">First step: Center each variable</a></li>
+  <li><a href="#second-step-obtaining-the-covariance-matrix" id="toc-second-step-obtaining-the-covariance-matrix" class="nav-link" data-scroll-target="#second-step-obtaining-the-covariance-matrix">Second step: Obtaining the covariance matrix</a></li>
+  <li><a href="#third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix" id="toc-third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix" class="nav-link" data-scroll-target="#third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix">Third step: Obtain the eigenvalues and eigenvectors of the covariance matrix</a></li>
+  <li><a href="#fourth-step-make-a-scree-plot" id="toc-fourth-step-make-a-scree-plot" class="nav-link" data-scroll-target="#fourth-step-make-a-scree-plot">Fourth step: Make a Scree Plot</a></li>
+  <li><a href="#fifth-step-obtain-the-loadings-of-each-variable." id="toc-fifth-step-obtain-the-loadings-of-each-variable." class="nav-link" data-scroll-target="#fifth-step-obtain-the-loadings-of-each-variable.">Fifth step: Obtain the loadings of each variable.</a></li>
+  <li><a href="#sixth-step-representing-data-in-fewer-dimensions" id="toc-sixth-step-representing-data-in-fewer-dimensions" class="nav-link" data-scroll-target="#sixth-step-representing-data-in-fewer-dimensions">Sixth step: Representing data in fewer dimensions</a></li>
+  </ul></li>
+  <li><a href="#generalization-to-data-with-more-than-two-dimensions" id="toc-generalization-to-data-with-more-than-two-dimensions" class="nav-link" data-scroll-target="#generalization-to-data-with-more-than-two-dimensions">Generalization to data with more than two dimensions</a>
+  <ul class="collapse">
+  <li><a href="#first-step-center-the-data" id="toc-first-step-center-the-data" class="nav-link" data-scroll-target="#first-step-center-the-data">First step: Center the data</a></li>
+  <li><a href="#second-step-calculating-the-covariance-matrix" id="toc-second-step-calculating-the-covariance-matrix" class="nav-link" data-scroll-target="#second-step-calculating-the-covariance-matrix">Second step: Calculating the covariance matrix</a></li>
+  <li><a href="#third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix." id="toc-third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix." class="nav-link" data-scroll-target="#third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix.">Third step: Obtain the eigenvalues and eigenvectors of the covariance matrix.</a></li>
+  <li><a href="#fourth-step-make-a-scree-plot-1" id="toc-fourth-step-make-a-scree-plot-1" class="nav-link" data-scroll-target="#fourth-step-make-a-scree-plot-1">Fourth step: Make a Scree Plot</a></li>
+  <li><a href="#fifth-step-obtain-the-loadings-of-each-variable" id="toc-fifth-step-obtain-the-loadings-of-each-variable" class="nav-link" data-scroll-target="#fifth-step-obtain-the-loadings-of-each-variable">Fifth step: Obtain the loadings of each variable</a></li>
+  <li><a href="#sixth-step-representing-data-in-fewer-dimensions-1" id="toc-sixth-step-representing-data-in-fewer-dimensions-1" class="nav-link" data-scroll-target="#sixth-step-representing-data-in-fewer-dimensions-1">Sixth step: Representing data in fewer dimensions</a></li>
+  </ul></li>
+  <li><a href="#key-points" id="toc-key-points" class="nav-link" data-scroll-target="#key-points">Key points</a></li>
+  <li><a href="#additional-resources" id="toc-additional-resources" class="nav-link" data-scroll-target="#additional-resources">Additional Resources</a></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/cover.jpeg" class="img-fluid figure-img" width="450"></p>
+</figure>
+</div>
+<p>All the data and code of this post can be download on the next repository : <a href="https://github.com/juanpa-biotech/pca-from-scratch">pca-from-scratch</a></p>
+<section id="what-is-principal-component-analysis" class="level1">
+<h1>What is principal component analysis?</h1>
+<p><a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank">Principal component analysis (PCA)</a> is an exploratory data analysis based on the reduction of dimensions of a given data set. The general idea is to reduce the data set so that it has fewer dimensions while retaining as much information as possible.</p>
+<p>PCA allows us to make visual representations in two dimensions and to check for groupings or differences in the data related to different states, treatments, etc. In addition, we can get some clue as to which variables in the data are responsible for the visual differences.</p>
+<p>It is important to emphasize that the PCA is not used exclusively for the above, and given that it is an exploratory analysis, the similarities or differences observed in the data should be considered with caution and in the context from which they originate.</p>
+</section>
+<section id="a-simple-case-with-two-dimensional-data" class="level1">
+<h1>A simple case with two-dimensional data</h1>
+<p>Let’s start with a simple example with two-dimensional data, which will allow us to visualize some of the basic concepts behind PCA and then generalize what we have learned to data with more than two dimensions.</p>
+<section id="packages" class="level2">
+<h2 class="anchored" data-anchor-id="packages">Packages</h2>
+<p>For this post we will use some functions included in <code>ggplot2</code>, <code>ggpubr</code>, <code>readr</code>, <code>purrr</code> and <code>dplyr</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Run the next line if you have not installed the packages:</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># install.packages(c("ggplot2", "ggpubr", "readr", "purrr", "dplyr"))</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggpubr)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(purrr)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="data-simulation" class="level2">
+<h2 class="anchored" data-anchor-id="data-simulation">Data simulation</h2>
+<p>First let’s simulate data with two dimensions. To do this let’s make the second variable directly dependent on the first one and store everything in a data frame:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">1</span>) <span class="co"># For data reproducibility</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable 1</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>var_1 <span class="ot">&lt;-</span> <span class="fu">rnorm</span>(<span class="dv">50</span>, <span class="dv">50</span>, <span class="at">sd =</span> <span class="dv">3</span>)</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable 2</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>var_2 <span class="ot">&lt;-</span> .<span class="dv">5</span><span class="sc">*</span>var_1 <span class="sc">+</span> <span class="fu">rnorm</span>(<span class="dv">50</span>, <span class="at">sd =</span> <span class="fu">sqrt</span>(<span class="dv">3</span>))</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Both variables in a data frame</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>data_set_1 <span class="ot">&lt;-</span> <span class="fu">tibble</span>(var_1, var_2)</span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_set_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 2
+  var_1 var_2
+  &lt;dbl&gt; &lt;dbl&gt;
+1  48.1  24.7
+2  50.6  24.2
+3  47.5  24.3
+4  54.8  25.4
+5  51.0  28.0
+6  47.5  27.2</code></pre>
+</div>
+</div>
+<p>If we make a scatter plot we can observe the clear dependence between both variables:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A scatter plot with the two simulated variables</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_set_1, <span class="fu">aes</span>(<span class="at">x =</span> var_1, <span class="at">y =</span> var_2)) <span class="sc">+</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Variable 1"</span>) <span class="sc">+</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Variable 2"</span>) <span class="sc">+</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/scatter plot for 2d data-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="first-step-center-each-variable" class="level2">
+<h2 class="anchored" data-anchor-id="first-step-center-each-variable">First step: Center each variable</h2>
+<p>The first step in the PCA is to center each variable with respect to its average value:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>data_set_1 <span class="ot">&lt;-</span> data_set_1 <span class="sc">%&gt;%</span> </span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">varc_1 =</span> var_1 <span class="sc">-</span> <span class="fu">mean</span>(var_1), <span class="at">varc_2 =</span> var_2 <span class="sc">-</span> <span class="fu">mean</span>(var_2))</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_set_1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 6 × 4
+  var_1 var_2 varc_1  varc_2
+  &lt;dbl&gt; &lt;dbl&gt;  &lt;dbl&gt;   &lt;dbl&gt;
+1  48.1  24.7 -2.18  -0.604 
+2  50.6  24.2  0.250 -1.14  
+3  47.5  24.3 -2.81  -1.02  
+4  54.8  25.4  4.48   0.0829
+5  51.0  28.0  0.687  2.62  
+6  47.5  27.2 -2.76   1.85  </code></pre>
+</div>
+</div>
+<p>This did not change the relative position between each point, so the data look the same:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(data_set_1, <span class="fu">aes</span>(<span class="at">x =</span> varc_1, <span class="at">y =</span> varc_2)) <span class="sc">+</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/scatter plot for centered data-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="second-step-obtaining-the-covariance-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="second-step-obtaining-the-covariance-matrix">Second step: Obtaining the covariance matrix</h2>
+<p>The next step is to obtain the covariance matrix for the previous data set. For this we perform a matrix multiplication with the data as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select only the centered variables</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>data_set_2 <span class="ot">&lt;-</span> data_set_1 <span class="sc">%&gt;%</span> </span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(varc_1, varc_2) <span class="sc">%&gt;%</span> </span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.matrix</span>()</span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the covariance matrix</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>cov_m <span class="ot">&lt;-</span> (<span class="fu">t</span>(data_set_2) <span class="sc">%*%</span> data_set_2) <span class="sc">/</span> (<span class="fu">nrow</span>(data_set_2) <span class="sc">-</span> <span class="dv">1</span>) </span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>cov_m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         varc_1   varc_2
+varc_1 6.220943 2.946877
+varc_2 2.946877 4.207523</code></pre>
+</div>
+</div>
+<p>In the resulting matrix the diagonal contains the variance of each variable while the values outside the diagonal are the covariances between the variables (see figure below):</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/image_1.jpg" class="img-fluid figure-img" width="450"></p>
+</figure>
+</div>
+<p>We can obtain the covariance matrix directly with the <code>cov()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">cov</span>(data_set_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         varc_1   varc_2
+varc_1 6.220943 2.946877
+varc_2 2.946877 4.207523</code></pre>
+</div>
+</div>
+<p>Or with the crossprod() function as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">crossprod</span>(data_set_2) <span class="sc">/</span> (<span class="fu">nrow</span>(data_set_2) <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         varc_1   varc_2
+varc_1 6.220943 2.946877
+varc_2 2.946877 4.207523</code></pre>
+</div>
+</div>
+</section>
+<section id="third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix">Third step: Obtain the eigenvalues and eigenvectors of the covariance matrix</h2>
+<p>Principal components represent the directions in the data that explain the maximum amount of variance. They are “lines” that collect most of the information in the data. These directions can be obtained by calculating the eigenvalues and eigenvectors of the covariance matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Use eigen() to obtain eigenvectors and eigenvalues</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>cov_e <span class="ot">&lt;-</span> <span class="fu">eigen</span>(cov_m)</span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Eigenvectors</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>e_vec <span class="ot">&lt;-</span> cov_e<span class="sc">$</span>vectors</span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Eigenvalues</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>e_val <span class="ot">&lt;-</span> cov_e<span class="sc">$</span>values</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The span of each eigenvector can be considered the “line” that captures most of the variation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># First eigenvector </span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>ev_1 <span class="ot">&lt;-</span> e_vec[,<span class="dv">1</span>]</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Slope of the first eigenvector</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>ev1_m <span class="ot">&lt;-</span> ev_1[<span class="dv">2</span>] <span class="sc">/</span> ev_1[<span class="dv">1</span>]</span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Second eigenvector </span></span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>ev_2 <span class="ot">&lt;-</span> e_vec[,<span class="dv">2</span>]</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Slope of the second eigenvector</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>ev2_m <span class="ot">&lt;-</span> ev_2[<span class="dv">2</span>] <span class="sc">/</span> ev_2[<span class="dv">1</span>]</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot showing the span of both eigenvectors </span></span>
+<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(data_set_2), <span class="fu">aes</span>(<span class="at">x =</span> varc_1, <span class="at">y =</span> varc_2)) <span class="sc">+</span></span>
+<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> ev1_m, <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_abline</span>(<span class="at">slope =</span> ev2_m, <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">linewidth =</span> <span class="fl">0.7</span>) <span class="sc">+</span></span>
+<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/scatter plot with each principal component for 2d data-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>As can be seen, there is one eigenvector for each variable in the data set, in this case two. Also note that the eigenvectors are perpendicular:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Multiply both eigenvectors </span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>ev_1 <span class="sc">%*%</span> ev_2</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]    0</code></pre>
+</div>
+</div>
+<p>As for the eigenvalues, their numerical values are equal to the sum of squares of the distances of each projected data point in the corresponding principal component. This sum of squares is maximized in the first principal component.</p>
+</section>
+<section id="fourth-step-make-a-scree-plot" class="level2">
+<h2 class="anchored" data-anchor-id="fourth-step-make-a-scree-plot">Fourth step: Make a Scree Plot</h2>
+<p>Dividing each eigenvalue by <em>n - 1</em> (<em>n</em> is the number of rows in the original data) will give an estimate of the variance represented by each principal component. The sum of all variances (the total variance) can be used to calculate the percentage of variation and visualized with a Scree Plot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the estimated variance for each eigenvalue</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>e_var <span class="ot">&lt;-</span> e_val <span class="sc">/</span> (<span class="fu">nrow</span>(data_set_2) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame with variance percentages</span></span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>var_per <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">PC  =</span> <span class="fu">c</span>(<span class="st">"PC1"</span>, <span class="st">"PC2"</span>),</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">PER =</span> <span class="fu">c</span>(e_var) <span class="sc">*</span> <span class="dv">100</span> <span class="sc">/</span> <span class="fu">sum</span>(e_var) <span class="co"># Calculate the percentage</span></span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Scree plot </span></span>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(var_per, <span class="fu">aes</span>(<span class="at">x =</span> PC, <span class="at">y =</span> PER)) <span class="sc">+</span></span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Principal component"</span>) <span class="sc">+</span></span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage of variation (%)"</span>) <span class="sc">+</span></span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/scree plot 2d data-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="fifth-step-obtain-the-loadings-of-each-variable." class="level2">
+<h2 class="anchored" data-anchor-id="fifth-step-obtain-the-loadings-of-each-variable.">Fifth step: Obtain the loadings of each variable.</h2>
+<p>The eigenvectors obtained using the <code>eigen()</code> function are normalized. This means that their length is equal to 1:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Norm of the first eigenvector</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">norm</span>(<span class="fu">as.matrix</span>(ev_1), <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Norm of the second eigenvector</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">norm</span>(<span class="fu">as.matrix</span>(ev_2), <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+<p>The elements of each eigenvector are also called loadings and can be interpreted as the contribution of each variable in the data set to the corresponding principal component or, more strictly, as the coefficients of the linear combination of the original variables from which the principal components are constructed.</p>
+<p>We can make a table with these values and see the contributions of each variable to each principal component:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame with both eigenvectors</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>loads <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">VAR   =</span> <span class="fu">c</span>(<span class="st">"var_1"</span>, <span class="st">"var_2"</span>),</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">PC1 =</span> ev_1, <span class="co"># First eigenvecor</span></span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">PC2 =</span> ev_2  <span class="co"># Second eigenvectors</span></span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>loads</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 3
+  VAR      PC1    PC2
+  &lt;chr&gt;  &lt;dbl&gt;  &lt;dbl&gt;
+1 var_1 -0.813  0.582
+2 var_2 -0.582 -0.813</code></pre>
+</div>
+</div>
+<p>The above can be useful in data with many dimensions to get an idea of which variables cause the groupings or differences in the PCA plot.</p>
+</section>
+<section id="sixth-step-representing-data-in-fewer-dimensions" class="level2">
+<h2 class="anchored" data-anchor-id="sixth-step-representing-data-in-fewer-dimensions">Sixth step: Representing data in fewer dimensions</h2>
+<p>If we change the base of the original data to that indicated by the eigenvectors, we are basically rotating the data:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Change the basis of the original data </span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>data_set_3 <span class="ot">&lt;-</span> data_set_2 <span class="sc">%*%</span> <span class="fu">solve</span>(e_vec) <span class="co"># Inverse of eigenvectors matrix</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter showing the rotation </span></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(data_set_3), <span class="fu">aes</span>(X1, X2)) <span class="sc">+</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC1 (78.8%)"</span>) <span class="sc">+</span></span>
+<span id="cb25-10"><a href="#cb25-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC2 (21.2%)"</span>) <span class="sc">+</span></span>
+<span id="cb25-11"><a href="#cb25-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/change of basis-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Comparing the two graphs gives us an idea of how the data have been rotated once we change the base:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot with the centered data </span></span>
+<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(data_set_2), <span class="fu">aes</span>(<span class="at">x =</span> varc_1, <span class="at">y =</span> varc_2)) <span class="sc">+</span></span>
+<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb26-6"><a href="#cb26-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">8</span>, <span class="fl">8.5</span>)) <span class="sc">+</span></span>
+<span id="cb26-7"><a href="#cb26-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Original Data"</span>) <span class="sc">+</span></span>
+<span id="cb26-8"><a href="#cb26-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb26-9"><a href="#cb26-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-10"><a href="#cb26-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot with the rotated data</span></span>
+<span id="cb26-11"><a href="#cb26-11" aria-hidden="true" tabindex="-1"></a>plot_rotation <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(<span class="fu">data.frame</span>(data_set_3), <span class="fu">aes</span>(X1, X2)) <span class="sc">+</span></span>
+<span id="cb26-12"><a href="#cb26-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb26-13"><a href="#cb26-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb26-14"><a href="#cb26-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb26-15"><a href="#cb26-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC1 (78.8%)"</span>) <span class="sc">+</span></span>
+<span id="cb26-16"><a href="#cb26-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC2 (21.2%)"</span>) <span class="sc">+</span></span>
+<span id="cb26-17"><a href="#cb26-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">8</span>, <span class="fl">8.5</span>)) <span class="sc">+</span></span>
+<span id="cb26-18"><a href="#cb26-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Change of Basis to Eigenvectors"</span>) <span class="sc">+</span></span>
+<span id="cb26-19"><a href="#cb26-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb26-20"><a href="#cb26-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb26-21"><a href="#cb26-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Both graphs side by side</span></span>
+<span id="cb26-22"><a href="#cb26-22" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(plot_data, plot_rotation)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/compare rotation and original 2d data-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>Since principal component 1 (PC1) explains most of the variance in the data, we can omit principal component 2 (PC2) and represent each point in a single dimension, here as red dots:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data points just from PC 1</span></span>
+<span id="cb27-2"><a href="#cb27-2" aria-hidden="true" tabindex="-1"></a>data_pc1 <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(<span class="at">v1 =</span> data_set_3[,<span class="dv">1</span>], <span class="at">v2 =</span> <span class="fu">rep</span>(<span class="dv">0</span>, <span class="fu">nrow</span>(data_set_3)))</span>
+<span id="cb27-3"><a href="#cb27-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb27-4"><a href="#cb27-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot showing the projected points from PC1 (red points)</span></span>
+<span id="cb27-5"><a href="#cb27-5" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="fu">data.frame</span>(data_set_3), <span class="fu">aes</span>(X1, X2)) <span class="sc">+</span></span>
+<span id="cb27-6"><a href="#cb27-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb27-7"><a href="#cb27-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> data_pc1, <span class="fu">aes</span>(v1, v2), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb27-8"><a href="#cb27-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb27-9"><a href="#cb27-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>, <span class="at">linewidth =</span> .<span class="dv">5</span>) <span class="sc">+</span></span>
+<span id="cb27-10"><a href="#cb27-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC1 (78.8%)"</span>) <span class="sc">+</span></span>
+<span id="cb27-11"><a href="#cb27-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC2 (21.2%)"</span>) <span class="sc">+</span></span>
+<span id="cb27-12"><a href="#cb27-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="sc">-</span><span class="dv">8</span>, <span class="fl">8.5</span>)) <span class="sc">+</span></span>
+<span id="cb27-13"><a href="#cb27-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/projections on PC1-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>The above ideas can be used in data with many variables to reduce the dimensions and make two-dimensional representations of the data.</p>
+</section>
+</section>
+<section id="generalization-to-data-with-more-than-two-dimensions" class="level1">
+<h1>Generalization to data with more than two dimensions</h1>
+<p>Let us now apply the same procedure to a data set with more variables, namely <a href="https://ucphchemometrics.com/2023/06/01/wine-samples-analyzed-by-gc-ms-and-ft-ir-instruments/" target="_blank">wine samples analyzed by GC-MS and FT-IR instruments</a>, where the following responses were measured:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/image_2.jpg" class="img-fluid figure-img" width="350"></p>
+</figure>
+</div>
+<p>The wine samples come from Argentina, Chile, Australia and South Africa:</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="img/image_3.jpg" class="img-fluid figure-img" width="230"></p>
+</figure>
+</div>
+<p>The first six rows of the data set look as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Variable names</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>var_names <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/juanpa-biotech/pca-from-scratch/master/data/Label_Pred_values_IR.csv"</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>var_names <span class="ot">&lt;-</span> <span class="fu">names</span>(var_names)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Wine labels</span></span>
+<span id="cb28-6"><a href="#cb28-6" aria-hidden="true" tabindex="-1"></a>wine_label <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"https://raw.githubusercontent.com/juanpa-biotech/pca-from-scratch/master/data/Label_Wine_samples.csv"</span>)</span>
+<span id="cb28-7"><a href="#cb28-7" aria-hidden="true" tabindex="-1"></a>wine_label <span class="ot">&lt;-</span> <span class="fu">unname</span>(<span class="fu">unlist</span>(wine_label))</span>
+<span id="cb28-8"><a href="#cb28-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-9"><a href="#cb28-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Wine data set</span></span>
+<span id="cb28-10"><a href="#cb28-10" aria-hidden="true" tabindex="-1"></a>data_set_wine <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(</span>
+<span id="cb28-11"><a href="#cb28-11" aria-hidden="true" tabindex="-1"></a>  <span class="st">"https://raw.githubusercontent.com/juanpa-biotech/pca-from-scratch/master/data/Pred_values.csv"</span>, </span>
+<span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a>  <span class="at">col_names =</span> var_names</span>
+<span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="fu">row.names</span>(data_set_wine) <span class="ot">&lt;-</span> wine_label</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(<span class="fu">as.matrix</span>(data_set_wine))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Ethanol TotalAcid VolatileA MalicAcid   pH LacticAc ReSugar CitricAcid
+ARG-BNS1   13.62      3.54      0.29      0.89 3.71     0.78    1.46       0.31
+ARG-DDA1   14.06      3.74      0.59      0.24 3.73     1.25    2.42       0.18
+ARG-FFL1   13.74      3.27      0.47     -0.07 3.87     1.13    1.52       0.39
+ARG-FLM1   13.95      3.66      0.47      0.09 3.79     1.00    4.17       0.41
+ARG-ICR1   14.47      3.66      0.38      0.61 3.70     0.81    1.25       0.14
+ARG-SAL1   14.61      3.45      0.52      0.16 3.92     1.76    1.40       0.10
+            CO2 Density FolinC Glycerol Methanol TartaricA
+ARG-BNS1  85.61    0.99  60.92     9.72     0.16      1.74
+ARG-DDA1 175.20    1.00  70.64    10.05     0.20      1.58
+ARG-FFL1 513.74    0.99  63.59    10.92     0.18      1.24
+ARG-FLM1 379.40    1.00  73.30     9.69     0.23      2.26
+ARG-ICR1 154.88    0.99  71.69    10.81     0.20      1.22
+ARG-SAL1 156.30    0.99  71.79    10.19     0.19      0.90</code></pre>
+</div>
+</div>
+<p>Note that the wine samples are marked as the names of the rows in the data frame and in turn wine samples have associated values for each response (in the columns). Pay attention to this when calculating covariance matrices or using functions to perform PCA, do you want to reduce the dimensions with respect to rows or with respect to columns? Here we are interested in reducing the number of dimensions with respect to the responses (columns) and try to detect if there are any similarities or differences between the wine samples.</p>
+<section id="first-step-center-the-data" class="level2">
+<h2 class="anchored" data-anchor-id="first-step-center-the-data">First step: Center the data</h2>
+<p>Subtract the average of each variable (columns) and divide by its standard deviation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Means for each variable</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>var_means <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">map</span>(data_set_wine, mean))</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-4"><a href="#cb30-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Standard deviation for each variable</span></span>
+<span id="cb30-5"><a href="#cb30-5" aria-hidden="true" tabindex="-1"></a>var_sd <span class="ot">&lt;-</span> <span class="fu">unlist</span>(<span class="fu">map</span>(data_set_wine, sd))</span>
+<span id="cb30-6"><a href="#cb30-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-7"><a href="#cb30-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Center each variable</span></span>
+<span id="cb30-8"><a href="#cb30-8" aria-hidden="true" tabindex="-1"></a>data_set_wine_2 <span class="ot">&lt;-</span> <span class="fu">map2</span>(</span>
+<span id="cb30-9"><a href="#cb30-9" aria-hidden="true" tabindex="-1"></a>  data_set_wine, var_means, <span class="at">.f =</span> <span class="cf">function</span>(x, mean) x <span class="sc">-</span> mean</span>
+<span id="cb30-10"><a href="#cb30-10" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb30-11"><a href="#cb30-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-12"><a href="#cb30-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Devide by the standard deviation of each variable</span></span>
+<span id="cb30-13"><a href="#cb30-13" aria-hidden="true" tabindex="-1"></a>data_set_wine_2 <span class="ot">&lt;-</span> <span class="fu">map2</span>(</span>
+<span id="cb30-14"><a href="#cb30-14" aria-hidden="true" tabindex="-1"></a>  data_set_wine_2, var_sd, <span class="at">.f =</span> <span class="cf">function</span>(x, sd) x <span class="sc">/</span> sd</span>
+<span id="cb30-15"><a href="#cb30-15" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb30-16"><a href="#cb30-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb30-17"><a href="#cb30-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Make a matrix from the previous list</span></span>
+<span id="cb30-18"><a href="#cb30-18" aria-hidden="true" tabindex="-1"></a>data_set_wine_2 <span class="ot">&lt;-</span> <span class="fu">as.matrix</span>(<span class="fu">data.frame</span>(data_set_wine_2))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Each row of the transformed data corresponds to the same wine sample as the original data.</p>
+<p>The first six rows of the transformed data look like this:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_set_wine_2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         Ethanol   TotalAcid  VolatileA  MalicAcid         pH    LacticAc
+[1,] -0.63678489 -0.40870999 -0.7811641  2.2627949 0.18823560 -0.88226788
+[2,]  0.29224039  0.01096889  1.3231961 -0.5694123 0.40060357  0.38388752
+[3,] -0.38341492 -0.97527630  0.4814521 -1.9201573 1.88717938  0.06061381
+[4,]  0.05998306 -0.15690246  0.4814521 -1.2229986 1.03770749 -0.28959935
+[5,]  1.15792167 -0.15690246 -0.1498560  1.0427673 0.08205162 -0.80144937
+[6,]  1.45351898 -0.59756526  0.8321787 -0.9179917 2.41810183  1.75780072
+        ReSugar CitricAcid        CO2    Density     FolinC     Glycerol
+[1,] -0.5311188  1.1594919 -1.6049333 -0.7844233 -0.1371321 -0.525885112
+[2,]  0.1996454  0.1084153 -0.9482843  1.2458487  1.2376582 -0.160707985
+[3,] -0.4854461  1.8063082  1.5330409 -0.7844233  0.2405111  0.802031815
+[4,]  1.5317676  1.9680124  0.5483973  1.2458487  1.6138874 -0.559083800
+[5,] -0.6909735 -0.2149929 -1.0972195 -0.7844233  1.3861700  0.680306454
+[6,] -0.5767916 -0.5384012 -1.0868116 -0.7844233  1.4003137 -0.005784995
+       Methanol   TartaricA
+[1,] -1.1081037  0.43877622
+[2,] -0.0870238 -0.03865555
+[3,] -0.5975636 -1.05319836
+[4,]  0.6787860  1.99042973
+[5,] -0.0870238 -1.11287729
+[6,] -0.3422939 -2.06774119</code></pre>
+</div>
+</div>
+<p>Dividing by standard deviations is a way of giving each variable equal importance despite its range, magnitude and/or scale of measurement. In addition to dividing by the standard deviation, it is possible to apply other transformations depending on the data. See the resources at the end of this post if you are interested.</p>
+</section>
+<section id="second-step-calculating-the-covariance-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="second-step-calculating-the-covariance-matrix">Second step: Calculating the covariance matrix</h2>
+<p>We multiply the data (in matrix form) by its transpose:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the covariance matrix</span></span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>cov_wine <span class="ot">&lt;-</span> (<span class="fu">t</span>(data_set_wine_2) <span class="sc">%*%</span> data_set_wine_2) <span class="sc">/</span> </span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a>  (<span class="fu">nrow</span>(data_set_wine_2) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb33-4"><a href="#cb33-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-5"><a href="#cb33-5" aria-hidden="true" tabindex="-1"></a>cov_wine[<span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>, <span class="dv">1</span><span class="sc">:</span><span class="dv">5</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>             Ethanol  TotalAcid  VolatileA   MalicAcid         pH
+Ethanol   1.00000000  0.3262321  0.2028382  0.04166778  0.1697347
+TotalAcid 0.32623209  1.0000000  0.4660575 -0.26067574 -0.3518303
+VolatileA 0.20283816  0.4660575  1.0000000 -0.74628880  0.3011611
+MalicAcid 0.04166778 -0.2606757 -0.7462888  1.00000000 -0.2929542
+pH        0.16973470 -0.3518303  0.3011611 -0.29295421  1.0000000</code></pre>
+</div>
+</div>
+<p>Here we only show the first five rows and columns of the covariance matrix. If you want to display the whole matrix a good way is to use the <code>View()</code> function.</p>
+<p>Each value of the cov_wine matrix has the same interpretation as in the example with two variables, the values on the diagonal are the variances of each variable, and the values outside the diagonal are the covariances between variables. As can be seen, all variances are equal to 1. This is precisely the effect of centering and dividing by the standard deviation.</p>
+</section>
+<section id="third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix." class="level2">
+<h2 class="anchored" data-anchor-id="third-step-obtain-the-eigenvalues-and-eigenvectors-of-the-covariance-matrix.">Third step: Obtain the eigenvalues and eigenvectors of the covariance matrix.</h2>
+<p>Let’s use the <code>eigen()</code> function to obtain the eigenvectors and their eigenvalues:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="co"># eigen() to obtain eigenvalues and eigenvectors</span></span>
+<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a>eg_wine <span class="ot">&lt;-</span> <span class="fu">eigen</span>(cov_wine)</span>
+<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Eigenvalues</span></span>
+<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a>eg_vals <span class="ot">&lt;-</span> eg_wine<span class="sc">$</span>values</span>
+<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb35-7"><a href="#cb35-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Eigenvectors</span></span>
+<span id="cb35-8"><a href="#cb35-8" aria-hidden="true" tabindex="-1"></a>eg_vecs <span class="ot">&lt;-</span> eg_wine<span class="sc">$</span>vectors</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The number of vectors and eigenvalues is the same as the number of variables in the original data set:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of eigenvalues</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a><span class="fu">length</span>(eg_vals)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Number of eigenvectors</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ncol</span>(eg_vecs)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 14</code></pre>
+</div>
+</div>
+</section>
+<section id="fourth-step-make-a-scree-plot-1" class="level2">
+<h2 class="anchored" data-anchor-id="fourth-step-make-a-scree-plot-1">Fourth step: Make a Scree Plot</h2>
+<p>We calculated the percentage of variation of each component and made a Scree plot:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate variances from each eigenvalue</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>eg_vars <span class="ot">&lt;-</span> eg_vals <span class="sc">/</span> (<span class="fu">nrow</span>(data_set_wine_2) <span class="sc">-</span> <span class="dv">1</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-4"><a href="#cb40-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame with variance percenatges</span></span>
+<span id="cb40-5"><a href="#cb40-5" aria-hidden="true" tabindex="-1"></a>vars_perc <span class="ot">&lt;-</span> <span class="fu">tibble</span>(</span>
+<span id="cb40-6"><a href="#cb40-6" aria-hidden="true" tabindex="-1"></a>  <span class="at">PC  =</span> <span class="fu">unlist</span>(<span class="fu">map</span>(<span class="dv">1</span><span class="sc">:</span><span class="dv">14</span>, <span class="cf">function</span>(x) <span class="fu">paste0</span>(<span class="st">"PC"</span>, x))),</span>
+<span id="cb40-7"><a href="#cb40-7" aria-hidden="true" tabindex="-1"></a>  <span class="at">PER =</span> <span class="fu">round</span>((eg_vars <span class="sc">*</span> <span class="dv">100</span>) <span class="sc">/</span> <span class="fu">sum</span>(eg_vars), <span class="dv">4</span>)</span>
+<span id="cb40-8"><a href="#cb40-8" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb40-9"><a href="#cb40-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb40-10"><a href="#cb40-10" aria-hidden="true" tabindex="-1"></a><span class="co"># Scree plot</span></span>
+<span id="cb40-11"><a href="#cb40-11" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(</span>
+<span id="cb40-12"><a href="#cb40-12" aria-hidden="true" tabindex="-1"></a>  vars_perc, </span>
+<span id="cb40-13"><a href="#cb40-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(PC, <span class="fu">order</span>(PER, <span class="at">decreasing =</span> <span class="cn">TRUE</span>)), <span class="at">y =</span> PER)</span>
+<span id="cb40-14"><a href="#cb40-14" aria-hidden="true" tabindex="-1"></a>       ) <span class="sc">+</span></span>
+<span id="cb40-15"><a href="#cb40-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">width =</span> <span class="fl">0.5</span>, <span class="at">color =</span> <span class="st">"black"</span>) <span class="sc">+</span></span>
+<span id="cb40-16"><a href="#cb40-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"Principal component"</span>) <span class="sc">+</span></span>
+<span id="cb40-17"><a href="#cb40-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"Percentage of variation (%)"</span>) <span class="sc">+</span></span>
+<span id="cb40-18"><a href="#cb40-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/scree plor for wine data-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="fifth-step-obtain-the-loadings-of-each-variable" class="level2">
+<h2 class="anchored" data-anchor-id="fifth-step-obtain-the-loadings-of-each-variable">Fifth step: Obtain the loadings of each variable</h2>
+<p>The elements of each eigenvector represent the weight of each variable in the corresponding principal component:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb41"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data frame with loading scores</span></span>
+<span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>loads_wine <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(eg_vecs)</span>
+<span id="cb41-3"><a href="#cb41-3" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(loads_wine) <span class="ot">&lt;-</span> vars_perc<span class="sc">$</span>PC</span>
+<span id="cb41-4"><a href="#cb41-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(loads_wine) <span class="ot">&lt;-</span> var_names</span>
+<span id="cb41-5"><a href="#cb41-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb41-6"><a href="#cb41-6" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(loads_wine)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>                 PC1        PC2         PC3         PC4          PC5
+Ethanol   -0.2050720 -0.3452884  0.28833198 -0.33833697  0.001102612
+TotalAcid -0.1457210 -0.4545803 -0.06374908  0.42139270  0.041508881
+VolatileA  0.2959952 -0.4418538  0.03338975  0.08430388 -0.010891943
+MalicAcid -0.3401714  0.3173079  0.17907611 -0.04002812 -0.252870227
+pH         0.2413635 -0.1030772 -0.04459655 -0.66472873 -0.170592677
+LacticAc   0.3462627 -0.3745378 -0.16738658  0.11850141 -0.108643313
+                  PC6          PC7         PC8        PC9        PC10
+Ethanol   -0.02992588  0.106645514  0.40565762  0.2220668 -0.07364281
+TotalAcid -0.10721872  0.109080109 -0.15801515  0.1647662 -0.12640759
+VolatileA  0.12676353 -0.117134957 -0.01066998 -0.2323371  0.19698524
+MalicAcid  0.09495473  0.247290148 -0.35870967  0.1792700 -0.27203174
+pH         0.01717167 -0.191605073 -0.30040129  0.3352703  0.28827462
+LacticAc   0.05496474  0.008009813 -0.10169448  0.1377493 -0.28605639
+                 PC11        PC12        PC13        PC14
+Ethanol    0.52247393 -0.22486081  0.29025392 -0.04195694
+TotalAcid -0.09209975 -0.25488777 -0.01537897  0.65083548
+VolatileA  0.19114512 -0.33800898 -0.59864002 -0.27743084
+MalicAcid -0.07338526 -0.53559762 -0.18854505 -0.23066288
+pH        -0.21200577 -0.09998927 -0.02838824  0.28223548
+LacticAc  -0.32247769 -0.11583440  0.49548494 -0.45696212</code></pre>
+</div>
+</div>
+<p>Making a scatter plot with these values can help determine correlations between variables and/or explain why a particular clustering is observed in principal component scatter plots (next section):</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb43"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot with loadings of PC1 and PC2</span></span>
+<span id="cb43-2"><a href="#cb43-2" aria-hidden="true" tabindex="-1"></a>ld_pc12 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(loads_wine, <span class="fu">aes</span>(PC1, PC2)) <span class="sc">+</span></span>
+<span id="cb43-3"><a href="#cb43-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb43-4"><a href="#cb43-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb43-5"><a href="#cb43-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb43-6"><a href="#cb43-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">rownames</span>(loads_wine)), <span class="at">hjust =</span> <span class="sc">-</span>.<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb43-7"><a href="#cb43-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Loadings for PC1 and PC2"</span>) <span class="sc">+</span></span>
+<span id="cb43-8"><a href="#cb43-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">7</span>, .<span class="dv">7</span>)) <span class="sc">+</span></span>
+<span id="cb43-9"><a href="#cb43-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">7</span>, .<span class="dv">7</span>)) <span class="sc">+</span></span>
+<span id="cb43-10"><a href="#cb43-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC1 (24.4%)"</span>) <span class="sc">+</span></span>
+<span id="cb43-11"><a href="#cb43-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC2 (21.3%)"</span>) <span class="sc">+</span></span>
+<span id="cb43-12"><a href="#cb43-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb43-13"><a href="#cb43-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-14"><a href="#cb43-14" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot with loadings of PC3 and PC4</span></span>
+<span id="cb43-15"><a href="#cb43-15" aria-hidden="true" tabindex="-1"></a>ld_pc34 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(loads_wine, <span class="fu">aes</span>(PC3, PC4)) <span class="sc">+</span></span>
+<span id="cb43-16"><a href="#cb43-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb43-17"><a href="#cb43-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_vline</span>(<span class="at">xintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb43-18"><a href="#cb43-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_hline</span>(<span class="at">yintercept =</span> <span class="dv">0</span>) <span class="sc">+</span></span>
+<span id="cb43-19"><a href="#cb43-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">rownames</span>(loads_wine)), <span class="at">hjust =</span> <span class="sc">-</span>.<span class="dv">2</span>) <span class="sc">+</span></span>
+<span id="cb43-20"><a href="#cb43-20" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"Loadings for PC3 and PC4"</span>) <span class="sc">+</span></span>
+<span id="cb43-21"><a href="#cb43-21" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlim</span>(<span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">7</span>, .<span class="dv">7</span>)) <span class="sc">+</span></span>
+<span id="cb43-22"><a href="#cb43-22" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="fu">c</span>(<span class="sc">-</span>.<span class="dv">7</span>, .<span class="dv">7</span>)) <span class="sc">+</span></span>
+<span id="cb43-23"><a href="#cb43-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC3 (17.5%)"</span>) <span class="sc">+</span></span>
+<span id="cb43-24"><a href="#cb43-24" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC4 (10.0%)"</span>) <span class="sc">+</span></span>
+<span id="cb43-25"><a href="#cb43-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb43-26"><a href="#cb43-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb43-27"><a href="#cb43-27" aria-hidden="true" tabindex="-1"></a><span class="co"># Both graphs side by side</span></span>
+<span id="cb43-28"><a href="#cb43-28" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(ld_pc12, ld_pc34)  </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/plot loading scores-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+<section id="sixth-step-representing-data-in-fewer-dimensions-1" class="level2">
+<h2 class="anchored" data-anchor-id="sixth-step-representing-data-in-fewer-dimensions-1">Sixth step: Representing data in fewer dimensions</h2>
+<p>Ideally, if PC1 and PC2 picked up most of the variation, say more than 90%, it would be possible to make a good representation of the data in a two-dimensional scatter plot. But since real data are almost never ideal, in this case PC1, PC2, PC3 and PC4 account for 73% of the variation. Let us try to observe clustering using two scatter plots, the first with PC1 and PC2, and the second with PC3 and PC4.</p>
+<p>First, we change the basis of the transformed data to that indicated by the eigenvectors:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Change the basis of the data</span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>data_set_wine_eb <span class="ot">&lt;-</span> data_set_wine_2 <span class="sc">%*%</span> <span class="fu">solve</span>(eg_vecs)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-4"><a href="#cb44-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Transfrom to a data frame</span></span>
+<span id="cb44-5"><a href="#cb44-5" aria-hidden="true" tabindex="-1"></a>data_set_wine_eb <span class="ot">&lt;-</span> <span class="fu">data.frame</span>(data_set_wine_eb)</span>
+<span id="cb44-6"><a href="#cb44-6" aria-hidden="true" tabindex="-1"></a><span class="fu">colnames</span>(data_set_wine_eb) <span class="ot">&lt;-</span> vars_perc<span class="sc">$</span>PC</span>
+<span id="cb44-7"><a href="#cb44-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-8"><a href="#cb44-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Add a column with the origin of each wine sample</span></span>
+<span id="cb44-9"><a href="#cb44-9" aria-hidden="true" tabindex="-1"></a>data_set_wine_eb <span class="ot">&lt;-</span> data_set_wine_eb <span class="sc">%&gt;%</span> </span>
+<span id="cb44-10"><a href="#cb44-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb44-11"><a href="#cb44-11" aria-hidden="true" tabindex="-1"></a>    <span class="at">WineSample =</span> <span class="fu">unlist</span>(<span class="fu">map</span>(wine_label, <span class="cf">function</span>(x) <span class="fu">substr</span>(x, <span class="dv">1</span>, <span class="dv">3</span>)))</span>
+<span id="cb44-12"><a href="#cb44-12" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">%&gt;%</span> </span>
+<span id="cb44-13"><a href="#cb44-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">relocate</span>(WineSample)</span>
+<span id="cb44-14"><a href="#cb44-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb44-15"><a href="#cb44-15" aria-hidden="true" tabindex="-1"></a><span class="fu">head</span>(data_set_wine_eb)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>  WineSample        PC1        PC2        PC3        PC4         PC5
+1        ARG -0.8708602  1.4271679  1.0042682 -0.4970542 -2.40194963
+2        ARG  0.9214933 -0.8023313  0.9170387 -0.3788901  0.04278493
+3        ARG  2.0993602 -1.1582579  0.1104490 -0.8588001  0.36878072
+4        ARG  2.6784566  0.6585042 -0.5914731 -1.1987690  0.55471303
+5        ARG -0.3093155 -0.7061611  0.9719731 -0.8791527 -1.48911945
+6        ARG  0.6656888 -1.9938918  2.0606329 -0.4319683 -0.58522246
+          PC6        PC7        PC8         PC9         PC10        PC11
+1 -0.50073335  0.7380182 -0.7113971  1.28454429  0.141197785  0.91258285
+2 -1.11669152 -0.6204253  0.1024002 -0.66345802  0.217715309 -0.44779807
+3 -0.01460188  0.6155704  1.2988198 -0.31647718 -1.945505546  1.56333545
+4 -1.77225038  1.1845744  0.7517347 -0.01741376 -0.458803511 -1.38374975
+5  0.58458758 -1.3525017  0.3597807  1.06873458  0.656603378 -0.04068736
+6  0.76213010 -0.9997045  2.4380628 -1.36498248 -0.004949351  1.27477965
+        PC12        PC13        PC14
+1 -0.0961029 -0.01151848  0.12807023
+2  0.6191680 -1.13863351 -0.22032005
+3 -0.2843139  1.44732864  0.08942808
+4  0.1136096 -1.16558478 -0.14095094
+5 -0.4097057  0.16732603 -0.70481769
+6 -0.5940964 -0.93709414 -0.52629641</code></pre>
+</div>
+</div>
+<p>Now, let’s make both scatter plots taking only the values of PC1, PC2, PC3 and PC4:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot for PC1 and PC2</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>pc12 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb46-3"><a href="#cb46-3" aria-hidden="true" tabindex="-1"></a>  data_set_wine_eb, </span>
+<span id="cb46-4"><a href="#cb46-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(PC1, PC2, <span class="at">color =</span> WineSample, <span class="at">shape =</span> WineSample)</span>
+<span id="cb46-5"><a href="#cb46-5" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb46-6"><a href="#cb46-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb46-7"><a href="#cb46-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"PC1 and PC2"</span>) <span class="sc">+</span></span>
+<span id="cb46-8"><a href="#cb46-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC1 (24.4%)"</span>) <span class="sc">+</span></span>
+<span id="cb46-9"><a href="#cb46-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC2 (21.3%)"</span>) <span class="sc">+</span></span>
+<span id="cb46-10"><a href="#cb46-10" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>() <span class="sc">+</span></span>
+<span id="cb46-11"><a href="#cb46-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="st">"none"</span>) </span>
+<span id="cb46-12"><a href="#cb46-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-13"><a href="#cb46-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Scatter plot for PC3 and PC4</span></span>
+<span id="cb46-14"><a href="#cb46-14" aria-hidden="true" tabindex="-1"></a>pc34 <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(</span>
+<span id="cb46-15"><a href="#cb46-15" aria-hidden="true" tabindex="-1"></a>  data_set_wine_eb, </span>
+<span id="cb46-16"><a href="#cb46-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">aes</span>(PC3, PC4, <span class="at">color =</span> WineSample, <span class="at">shape =</span> WineSample)</span>
+<span id="cb46-17"><a href="#cb46-17" aria-hidden="true" tabindex="-1"></a>) <span class="sc">+</span></span>
+<span id="cb46-18"><a href="#cb46-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
+<span id="cb46-19"><a href="#cb46-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_discrete</span>(</span>
+<span id="cb46-20"><a href="#cb46-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Wine origin"</span>, </span>
+<span id="cb46-21"><a href="#cb46-21" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Argentina"</span>, <span class="st">"Australia"</span>, <span class="st">"Chile"</span>, <span class="st">"South Africa"</span>)</span>
+<span id="cb46-22"><a href="#cb46-22" aria-hidden="true" tabindex="-1"></a>    ) <span class="sc">+</span></span>
+<span id="cb46-23"><a href="#cb46-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_shape_discrete</span>(</span>
+<span id="cb46-24"><a href="#cb46-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">name =</span> <span class="st">"Wine origin"</span>, </span>
+<span id="cb46-25"><a href="#cb46-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">labels =</span> <span class="fu">c</span>(<span class="st">"Argentina"</span>, <span class="st">"Australia"</span>, <span class="st">"Chile"</span>, <span class="st">"South Africa"</span>)</span>
+<span id="cb46-26"><a href="#cb46-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
+<span id="cb46-27"><a href="#cb46-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggtitle</span>(<span class="st">"PC3 and PC4"</span>) <span class="sc">+</span></span>
+<span id="cb46-28"><a href="#cb46-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">xlab</span>(<span class="st">"PC3 (17.5%)"</span>) <span class="sc">+</span></span>
+<span id="cb46-29"><a href="#cb46-29" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylab</span>(<span class="st">"PC4 (10.0%)"</span>) <span class="sc">+</span></span>
+<span id="cb46-30"><a href="#cb46-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_classic</span>()</span>
+<span id="cb46-31"><a href="#cb46-31" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb46-32"><a href="#cb46-32" aria-hidden="true" tabindex="-1"></a><span class="co"># Both graphs side by side</span></span>
+<span id="cb46-33"><a href="#cb46-33" aria-hidden="true" tabindex="-1"></a><span class="fu">ggarrange</span>(pc12, pc34)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/scatters plot for PC 1 2 3 4-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+</section>
+</section>
+<section id="key-points" class="level1">
+<h1>Key points</h1>
+<ul>
+<li><p>Principal component analysis (PCA) is a methodology that allows us to reduce the dimensionality of data while preserving important information.</p></li>
+<li><p>PCA is used to visualize data with many dimensions in two-dimensional plots, identify groupings and differences, and determine which variables are most relevant. However, its interpretation should be done with caution due to its exploratory nature.</p></li>
+<li><p>PCA can be performed in several steps with basic functions and linear algebra operations using the following steps:</p>
+<ol type="1">
+<li>Center each variable.</li>
+<li>Calculate the covariance matrix.</li>
+<li>Obtain eigenvalues and eigenvectors representing directions of maximum variation.</li>
+<li>Make a Scree Plot to visualize the variance explained by each component.</li>
+<li>Obtain the loadigns of the variables in the principal components.</li>
+<li>Represent the data in reduced dimensions, generally in two dimensions.</li>
+</ol></li>
+</ul>
+</section>
+<section id="additional-resources" class="level1">
+<h1>Additional Resources</h1>
+<p>It is important to know linear algebra to understand and visualize the core of PCA. The 3Blue1Brown video series is an excellent starting point for learning linear algebra:</p>
+<p><a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab" target="_blank">Essence of linear algebra</a>.</p>
+<p>Intuitive explanations of the PCA can be found in other channels:</p>
+<p><a href="https://www.youtube.com/watch?v=g-Hb26agBFg" target="_blank">Principal Component Analysis (PCA)</a>.</p>
+<p><a href="https://www.youtube.com/watch?v=FgakZw6K1QQ&amp;t=914s" target="_blank">StatQuest: Principal Component Analysis (PCA), Step-by-Step</a>.</p>
+<p>If you would like to see some examples of the application of this analysis to experimental data here are two articles oriented to chemometrics and metabolomics:</p>
+<p><a href="https://pubs.rsc.org/en/content/articlelanding/2014/ay/c3ay41907j" target="_blank">Principal component analysis</a>.</p>
+<p><a href="https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-7-142" target="_blank">Centering, scaling, and transformations: improving the biological information content of metabolomics data</a>.</p>
+<p>The code on this post is licensed under the <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="http://creativecommons.org/licenses/by/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+
+
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

@@ -1,0 +1,566 @@
+---
+title: "R tutorial: Principal Component Analysis from scratch"
+categories: ["R", "tutorial", "pca", "principal component analysis", "linear algebra"]
+date: "2023-10-30"
+description: 'How to perform PCA step by step using just basic linear algebra functions and operations'
+toc: true
+toc-location: left
+---
+
+![](img/cover.jpeg){fig-align="center" width="450"}
+
+All the data and code of this post can be download on the next repository : [pca-from-scratch](https://github.com/juanpa-biotech/pca-from-scratch)
+
+# What is principal component analysis?
+
+<a href="https://en.wikipedia.org/wiki/Principal_component_analysis" target="_blank">Principal component analysis (PCA)</a> is an exploratory data analysis based on the reduction of dimensions of a given data set. The general idea is to reduce the data set so that it has fewer dimensions while retaining as much information as possible.
+
+PCA allows us to make visual representations in two dimensions and to check for groupings or differences in the data related to different states, treatments, etc. In addition, we can get some clue as to which variables in the data are responsible for the visual differences.
+
+It is important to emphasize that the PCA is not used exclusively for the above, and given that it is an exploratory analysis, the similarities or differences observed in the data should be considered with caution and in the context from which they originate.
+
+# A simple case with two-dimensional data
+
+Let's start with a simple example with two-dimensional data, which will allow us to visualize some of the basic concepts behind PCA and then generalize what we have learned to data with more than two dimensions.
+
+## Packages
+
+For this post we will use some functions included in `ggplot2`, `ggpubr`, `readr`, `purrr` and `dplyr`:
+
+```{r packages, message=FALSE, warning=FALSE}
+# Run the next line if you have not installed the packages:
+# install.packages(c("ggplot2", "ggpubr", "readr", "purrr", "dplyr"))
+
+library(ggplot2)
+library(ggpubr)
+library(readr)
+library(purrr)
+library(dplyr)
+```
+
+## Data simulation
+
+First let's simulate data with two dimensions. To do this let's make the second variable directly dependent on the first one and store everything in a data frame:
+
+```{r 2d data simulation}
+set.seed(1) # For data reproducibility
+
+# Variable 1
+var_1 <- rnorm(50, 50, sd = 3)
+
+# Variable 2
+var_2 <- .5*var_1 + rnorm(50, sd = sqrt(3))
+
+# Both variables in a data frame
+data_set_1 <- tibble(var_1, var_2)
+
+head(data_set_1)
+```
+
+If we make a scatter plot we can observe the clear dependence between both variables:
+
+```{r scatter plot for 2d data}
+# A scatter plot with the two simulated variables
+ggplot(data_set_1, aes(x = var_1, y = var_2)) +
+  geom_point(color = "blue", size = 2) +
+  xlab("Variable 1") +
+  ylab("Variable 2") +
+  theme_classic()
+```
+
+## First step: Center each variable
+
+The first step in the PCA is to center each variable with respect to its average value:
+
+```{r center variables}
+data_set_1 <- data_set_1 %>% 
+  mutate(varc_1 = var_1 - mean(var_1), varc_2 = var_2 - mean(var_2))
+
+head(data_set_1)
+```
+
+This did not change the relative position between each point, so the data look the same:
+
+```{r scatter plot for centered data, message=FALSE}
+ggplot(data_set_1, aes(x = varc_1, y = varc_2)) +
+  geom_point(color = "blue", size = 2) +
+  geom_vline(xintercept = 0, linewidth = .5) +
+  geom_hline(yintercept = 0, linewidth = .5) +
+  theme_classic()
+```
+
+## Second step: Obtaining the covariance matrix
+
+The next step is to obtain the covariance matrix for the previous data set. For this we perform a matrix multiplication with the data as follows:
+
+```{r covariance matrix for 2d data}
+# Select only the centered variables
+data_set_2 <- data_set_1 %>% 
+  select(varc_1, varc_2) %>% 
+  as.matrix()
+
+# Calculate the covariance matrix
+cov_m <- (t(data_set_2) %*% data_set_2) / (nrow(data_set_2) - 1) 
+
+cov_m
+```
+
+In the resulting matrix the diagonal contains the variance of each variable while the values outside the diagonal are the covariances between the variables (see figure below):
+
+![](img/image_1.jpg){fig-align="center" width="450"}
+
+We can obtain the covariance matrix directly with the `cov()` function:
+
+```{r cov function with 2d data}
+cov(data_set_2)
+```
+
+Or with the crossprod() function as follows:
+
+```{r crossprod with 2d data}
+crossprod(data_set_2) / (nrow(data_set_2) - 1)
+```
+
+## Third step: Obtain the eigenvalues and eigenvectors of the covariance matrix
+
+Principal components represent the directions in the data that explain the maximum amount of variance. They are "lines" that collect most of the information in the data. These directions can be obtained by calculating the eigenvalues and eigenvectors of the covariance matrix:
+
+```{r eigen for 2d data}
+# Use eigen() to obtain eigenvectors and eigenvalues
+cov_e <- eigen(cov_m)
+
+# Eigenvectors
+e_vec <- cov_e$vectors
+
+# Eigenvalues
+e_val <- cov_e$values
+```
+
+The span of each eigenvector can be considered the "line" that captures most of the variation:
+
+```{r scatter plot with each principal component for 2d data}
+# First eigenvector 
+ev_1 <- e_vec[,1]
+
+# Slope of the first eigenvector
+ev1_m <- ev_1[2] / ev_1[1]
+
+# Second eigenvector 
+ev_2 <- e_vec[,2]
+
+# Slope of the second eigenvector
+ev2_m <- ev_2[2] / ev_2[1]
+
+# Scatter plot showing the span of both eigenvectors 
+ggplot(data.frame(data_set_2), aes(x = varc_1, y = varc_2)) +
+  geom_point(color = "blue", size = 2) +
+  geom_vline(xintercept = 0, linewidth = .5) +
+  geom_hline(yintercept = 0, linewidth = .5) +
+  geom_abline(slope = ev1_m, color = "blue", linewidth = 0.7) +
+  geom_abline(slope = ev2_m, color = "red", linewidth = 0.7) +
+  theme_classic()
+```
+
+As can be seen, there is one eigenvector for each variable in the data set, in this case two. Also note that the eigenvectors are perpendicular:
+
+```{r egeinvectors dot product}
+# Multiply both eigenvectors 
+ev_1 %*% ev_2
+```
+
+As for the eigenvalues, their numerical values are equal to the sum of squares of the distances of each projected data point in the corresponding principal component. This sum of squares is maximized in the first principal component.
+
+## Fourth step: Make a Scree Plot
+
+Dividing each eigenvalue by *n - 1* (*n* is the number of rows in the original data) will give an estimate of the variance represented by each principal component. The sum of all variances (the total variance) can be used to calculate the percentage of variation and visualized with a Scree Plot:
+
+```{r scree plot 2d data}
+# Calculate the estimated variance for each eigenvalue
+e_var <- e_val / (nrow(data_set_2) - 1)
+
+# Data frame with variance percentages
+var_per <- tibble(
+  PC  = c("PC1", "PC2"),
+  PER = c(e_var) * 100 / sum(e_var) # Calculate the percentage
+    )
+
+# Scree plot 
+ggplot(var_per, aes(x = PC, y = PER)) +
+  geom_col(width = 0.5, color = "black") +
+  xlab("Principal component") +
+  ylab("Percentage of variation (%)") +
+  theme_classic()
+```
+
+## Fifth step: Obtain the loadings of each variable.
+
+The eigenvectors obtained using the `eigen()` function are normalized. This means that their length is equal to 1:
+
+```{r norm for eigenvectors}
+# Norm of the first eigenvector
+norm(as.matrix(ev_1), "F")
+
+# Norm of the second eigenvector
+norm(as.matrix(ev_2), "F")
+```
+
+The elements of each eigenvector are also called loadings and can be interpreted as the contribution of each variable in the data set to the corresponding principal component or, more strictly, as the coefficients of the linear combination of the original variables from which the principal components are constructed.
+
+We can make a table with these values and see the contributions of each variable to each principal component:
+
+```{r loadings for eigenvectors, message=FALSE, warning=FALSE}
+# Data frame with both eigenvectors
+loads <- tibble(
+  VAR   = c("var_1", "var_2"),
+  PC1 = ev_1, # First eigenvecor
+  PC2 = ev_2  # Second eigenvectors
+)
+
+loads
+```
+
+The above can be useful in data with many dimensions to get an idea of which variables cause the groupings or differences in the PCA plot.
+
+## Sixth step: Representing data in fewer dimensions
+
+If we change the base of the original data to that indicated by the eigenvectors, we are basically rotating the data:
+
+```{r change of basis}
+# Change the basis of the original data 
+data_set_3 <- data_set_2 %*% solve(e_vec) # Inverse of eigenvectors matrix
+
+# Scatter showing the rotation 
+ggplot(data.frame(data_set_3), aes(X1, X2)) +
+  geom_point(color = "blue", size = 2) +
+  geom_vline(xintercept = 0, linewidth = .5) +
+  geom_hline(yintercept = 0, linewidth = .5) +
+  xlab("PC1 (78.8%)") +
+  ylab("PC2 (21.2%)") +
+  theme_classic()
+```
+
+Comparing the two graphs gives us an idea of how the data have been rotated once we change the base:
+
+```{r compare rotation and original 2d data, message=FALSE}
+# Scatter plot with the centered data 
+plot_data <- ggplot(data.frame(data_set_2), aes(x = varc_1, y = varc_2)) +
+  geom_point(color = "blue", size = 2) +
+  geom_vline(xintercept = 0, linewidth = .5) +
+  geom_hline(yintercept = 0, linewidth = .5) +
+  ylim(c(-8, 8.5)) +
+  ggtitle("Original Data") +
+  theme_classic()
+
+# Scatter plot with the rotated data
+plot_rotation <- ggplot(data.frame(data_set_3), aes(X1, X2)) +
+  geom_point(color = "blue", size = 2) +
+  geom_vline(xintercept = 0, linewidth = .5) +
+  geom_hline(yintercept = 0, linewidth = .5) +
+  xlab("PC1 (78.8%)") +
+  ylab("PC2 (21.2%)") +
+  ylim(c(-8, 8.5)) +
+  ggtitle("Change of Basis to Eigenvectors") +
+  theme_classic()
+
+# Both graphs side by side
+ggarrange(plot_data, plot_rotation)
+```
+
+Since principal component 1 (PC1) explains most of the variance in the data, we can omit principal component 2 (PC2) and represent each point in a single dimension, here as red dots:
+
+```{r projections on PC1}
+# Data points just from PC 1
+data_pc1 <- data.frame(v1 = data_set_3[,1], v2 = rep(0, nrow(data_set_3)))
+
+# Scatter plot showing the projected points from PC1 (red points)
+ggplot(data.frame(data_set_3), aes(X1, X2)) +
+  geom_point(color = "blue", size = 2) +
+  geom_point(data = data_pc1, aes(v1, v2), color = "red", size = 2) +
+  geom_vline(xintercept = 0, linewidth = .5) +
+  geom_hline(yintercept = 0, linewidth = .5) +
+  xlab("PC1 (78.8%)") +
+  ylab("PC2 (21.2%)") +
+  ylim(c(-8, 8.5)) +
+  theme_classic()
+```
+
+The above ideas can be used in data with many variables to reduce the dimensions and make two-dimensional representations of the data.
+
+# Generalization to data with more than two dimensions
+
+Let us now apply the same procedure to a data set with more variables, namely <a href="https://ucphchemometrics.com/2023/06/01/wine-samples-analyzed-by-gc-ms-and-ft-ir-instruments/" target="_blank">wine samples analyzed by GC-MS and FT-IR instruments</a>, where the following responses were measured:
+
+![](img/image_2.jpg){fig-align="center" width="350"}
+
+The wine samples come from Argentina, Chile, Australia and South Africa:
+
+![](img/image_3.jpg){fig-align="center" width="230"}
+
+The first six rows of the data set look as follows:
+
+```{r wine data, message=FALSE, warning=FALSE}
+# Variable names
+var_names <- read_csv("https://raw.githubusercontent.com/juanpa-biotech/pca-from-scratch/master/data/Label_Pred_values_IR.csv")
+var_names <- names(var_names)
+
+# Wine labels
+wine_label <- read_csv("https://raw.githubusercontent.com/juanpa-biotech/pca-from-scratch/master/data/Label_Wine_samples.csv")
+wine_label <- unname(unlist(wine_label))
+
+# Wine data set
+data_set_wine <- read_csv(
+  "https://raw.githubusercontent.com/juanpa-biotech/pca-from-scratch/master/data/Pred_values.csv", 
+  col_names = var_names
+)
+row.names(data_set_wine) <- wine_label
+
+head(as.matrix(data_set_wine))
+```
+
+Note that the wine samples are marked as the names of the rows in the data frame and in turn wine samples have associated values for each response (in the columns). Pay attention to this when calculating covariance matrices or using functions to perform PCA, do you want to reduce the dimensions with respect to rows or with respect to columns? Here we are interested in reducing the number of dimensions with respect to the responses (columns) and try to detect if there are any similarities or differences between the wine samples.
+
+## First step: Center the data
+
+Subtract the average of each variable (columns) and divide by its standard deviation:
+
+```{r center and divide by sd wine_data}
+# Means for each variable
+var_means <- unlist(map(data_set_wine, mean))
+
+# Standard deviation for each variable
+var_sd <- unlist(map(data_set_wine, sd))
+
+# Center each variable
+data_set_wine_2 <- map2(
+  data_set_wine, var_means, .f = function(x, mean) x - mean
+  )
+
+# Devide by the standard deviation of each variable
+data_set_wine_2 <- map2(
+  data_set_wine_2, var_sd, .f = function(x, sd) x / sd
+)
+
+# Make a matrix from the previous list
+data_set_wine_2 <- as.matrix(data.frame(data_set_wine_2))
+```
+
+Each row of the transformed data corresponds to the same wine sample as the original data.
+
+The first six rows of the transformed data look like this:
+
+```{r ten rows transformed data}
+head(data_set_wine_2)
+```
+
+Dividing by standard deviations is a way of giving each variable equal importance despite its range, magnitude and/or scale of measurement. In addition to dividing by the standard deviation, it is possible to apply other transformations depending on the data. See the resources at the end of this post if you are interested.
+
+## Second step: Calculating the covariance matrix
+
+We multiply the data (in matrix form) by its transpose:
+
+```{r wine data covariance matrix}
+# Calculate the covariance matrix
+cov_wine <- (t(data_set_wine_2) %*% data_set_wine_2) / 
+  (nrow(data_set_wine_2) - 1)
+
+cov_wine[1:5, 1:5]
+```
+
+Here we only show the first five rows and columns of the covariance matrix. If you want to display the whole matrix a good way is to use the `View()` function.
+
+Each value of the cov_wine matrix has the same interpretation as in the example with two variables, the values on the diagonal are the variances of each variable, and the values outside the diagonal are the covariances between variables. As can be seen, all variances are equal to 1. This is precisely the effect of centering and dividing by the standard deviation.
+
+## Third step: Obtain the eigenvalues and eigenvectors of the covariance matrix.
+
+Let's use the `eigen()` function to obtain the eigenvectors and their eigenvalues:
+
+```{r eigenvalues for cov_wine}
+# eigen() to obtain eigenvalues and eigenvectors
+eg_wine <- eigen(cov_wine)
+
+# Eigenvalues
+eg_vals <- eg_wine$values
+
+# Eigenvectors
+eg_vecs <- eg_wine$vectors
+```
+
+The number of vectors and eigenvalues is the same as the number of variables in the original data set:
+
+```{r eigen dimensions}
+# Number of eigenvalues
+length(eg_vals)
+
+# Number of eigenvectors
+ncol(eg_vecs)
+```
+
+## Fourth step: Make a Scree Plot
+
+We calculated the percentage of variation of each component and made a Scree plot:
+
+```{r scree plor for wine data}
+# Calculate variances from each eigenvalue
+eg_vars <- eg_vals / (nrow(data_set_wine_2) - 1)
+
+# Data frame with variance percenatges
+vars_perc <- tibble(
+  PC  = unlist(map(1:14, function(x) paste0("PC", x))),
+  PER = round((eg_vars * 100) / sum(eg_vars), 4)
+    )
+
+# Scree plot
+ggplot(
+  vars_perc, 
+  aes(x = reorder(PC, order(PER, decreasing = TRUE)), y = PER)
+       ) +
+  geom_col(width = 0.5, color = "black") +
+  xlab("Principal component") +
+  ylab("Percentage of variation (%)") +
+  theme_classic()
+```
+
+## Fifth step: Obtain the loadings of each variable
+
+The elements of each eigenvector represent the weight of each variable in the corresponding principal component:
+
+```{r loadings for wine data}
+# Data frame with loading scores
+loads_wine <- data.frame(eg_vecs)
+colnames(loads_wine) <- vars_perc$PC
+rownames(loads_wine) <- var_names
+
+head(loads_wine)
+```
+
+Making a scatter plot with these values can help determine correlations between variables and/or explain why a particular clustering is observed in principal component scatter plots (next section):
+
+```{r plot loading scores}
+# Scatter plot with loadings of PC1 and PC2
+ld_pc12 <- ggplot(loads_wine, aes(PC1, PC2)) +
+  geom_point(color = "blue", size = 2) +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0) +
+  geom_text(aes(label = rownames(loads_wine)), hjust = -.2) +
+  ggtitle("Loadings for PC1 and PC2") +
+  xlim(c(-.7, .7)) +
+  ylim(c(-.7, .7)) +
+  xlab("PC1 (24.4%)") +
+  ylab("PC2 (21.3%)") +
+  theme_classic()
+
+# Scatter plot with loadings of PC3 and PC4
+ld_pc34 <- ggplot(loads_wine, aes(PC3, PC4)) +
+  geom_point(color = "blue", size = 2) +
+  geom_vline(xintercept = 0) +
+  geom_hline(yintercept = 0) +
+  geom_text(aes(label = rownames(loads_wine)), hjust = -.2) +
+  ggtitle("Loadings for PC3 and PC4") +
+  xlim(c(-.7, .7)) +
+  ylim(c(-.7, .7)) +
+  xlab("PC3 (17.5%)") +
+  ylab("PC4 (10.0%)") +
+  theme_classic()
+
+# Both graphs side by side
+ggarrange(ld_pc12, ld_pc34)  
+```
+
+## Sixth step: Representing data in fewer dimensions
+
+Ideally, if PC1 and PC2 picked up most of the variation, say more than 90%, it would be possible to make a good representation of the data in a two-dimensional scatter plot. But since real data are almost never ideal, in this case PC1, PC2, PC3 and PC4 account for 73% of the variation. Let us try to observe clustering using two scatter plots, the first with PC1 and PC2, and the second with PC3 and PC4.
+
+First, we change the basis of the transformed data to that indicated by the eigenvectors:
+
+```{r change of basis for wine data}
+# Change the basis of the data
+data_set_wine_eb <- data_set_wine_2 %*% solve(eg_vecs)
+
+# Transfrom to a data frame
+data_set_wine_eb <- data.frame(data_set_wine_eb)
+colnames(data_set_wine_eb) <- vars_perc$PC
+
+# Add a column with the origin of each wine sample
+data_set_wine_eb <- data_set_wine_eb %>% 
+  mutate(
+    WineSample = unlist(map(wine_label, function(x) substr(x, 1, 3)))
+    ) %>% 
+  relocate(WineSample)
+
+head(data_set_wine_eb)
+```
+
+Now, let's make both scatter plots taking only the values of PC1, PC2, PC3 and PC4:
+
+```{r scatters plot for PC 1 2 3 4}
+# Scatter plot for PC1 and PC2
+pc12 <- ggplot(
+  data_set_wine_eb, 
+  aes(PC1, PC2, color = WineSample, shape = WineSample)
+) +
+  geom_point(size = 3) +
+  ggtitle("PC1 and PC2") +
+  xlab("PC1 (24.4%)") +
+  ylab("PC2 (21.3%)") +
+  theme_classic() +
+  theme(legend.position = "none") 
+
+# Scatter plot for PC3 and PC4
+pc34 <- ggplot(
+  data_set_wine_eb, 
+  aes(PC3, PC4, color = WineSample, shape = WineSample)
+) +
+  geom_point(size = 3) +
+  scale_color_discrete(
+    name = "Wine origin", 
+    labels = c("Argentina", "Australia", "Chile", "South Africa")
+    ) +
+  scale_shape_discrete(
+    name = "Wine origin", 
+    labels = c("Argentina", "Australia", "Chile", "South Africa")
+  ) +
+  ggtitle("PC3 and PC4") +
+  xlab("PC3 (17.5%)") +
+  ylab("PC4 (10.0%)") +
+  theme_classic()
+
+# Both graphs side by side
+ggarrange(pc12, pc34)
+```
+
+# Key points
+
+-   Principal component analysis (PCA) is a methodology that allows us to reduce the dimensionality of data while preserving important information.
+
+-   PCA is used to visualize data with many dimensions in two-dimensional plots, identify groupings and differences, and determine which variables are most relevant. However, its interpretation should be done with caution due to its exploratory nature.
+
+-   PCA can be performed in several steps with basic functions and linear algebra operations using the following steps:
+
+    1.  Center each variable.
+    2.  Calculate the covariance matrix.
+    3.  Obtain eigenvalues and eigenvectors representing directions of maximum variation.
+    4.  Make a Scree Plot to visualize the variance explained by each component.
+    5.  Obtain the loadigns of the variables in the principal components.
+    6.  Represent the data in reduced dimensions, generally in two dimensions.
+
+# Additional Resources
+
+It is important to know linear algebra to understand and visualize the core of PCA. The 3Blue1Brown video series is an excellent starting point for learning linear algebra:
+
+<a href="https://www.youtube.com/playlist?list=PLZHQObOWTQDPD3MizzM2xVFitgF8hE_ab" target="_blank">Essence of linear algebra</a>.
+
+Intuitive explanations of the PCA can be found in other channels:
+
+<a href="https://www.youtube.com/watch?v=g-Hb26agBFg" target="_blank">Principal Component Analysis (PCA)</a>.
+
+<a href="https://www.youtube.com/watch?v=FgakZw6K1QQ&t=914s" target="_blank">StatQuest: Principal Component Analysis (PCA), Step-by-Step</a>.
+
+If you would like to see some examples of the application of this analysis to experimental data here are two articles oriented to chemometrics and metabolomics:
+
+<a href="https://pubs.rsc.org/en/content/articlelanding/2014/ay/c3ay41907j" target="_blank">Principal component analysis</a>.
+
+<a href="https://bmcgenomics.biomedcentral.com/articles/10.1186/1471-2164-7-142" target="_blank">Centering, scaling, and transformations: improving the biological information content of metabolomics data</a>.
+
+The code on this post is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)
+
+[![](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)

@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/pca-from-scratch/index.html",
       "/posts/simultaneus_optimization/index.html",
       "/posts/prickly-pear-fruits/index.html",
       "/posts/nested-designs/index.html",
