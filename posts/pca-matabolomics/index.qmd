@@ -1,0 +1,285 @@
+---
+title: "R tutorial: Principal Component Analysis with Metabolomics Data"
+categories: ["R", "tutorial", "pca", "principal component analysis", "metabolomics"]
+date: "2023-12-1"
+description: 'An R code tutorial on how to perform principal component analysis on plant metabolomics data.'
+toc: true
+toc-location: left
+---
+
+![](/posts/pca-matabolomics/images/cover.jpg){fig-align="center" width="800"}
+
+In this tutorial we will cover the steps necessary to perform a principal component analysis (*PCA*) on metebolomic data from cell cultures of a specific plant. This will help us to visualize groupings and determine possible correlations.
+
+# Packages
+
+For this tutorial we will use a few functions inside `tidyverse`.
+
+To install all packages in tidyverse you can run the following code:
+
+```{r install tidyverse, eval=FALSE}
+install.packages("tidyverse")
+```
+
+And then load them into your R session:
+
+```{r load tidyverse, message=FALSE, warning=FALSE}
+library(tidyverse)
+```
+
+# Data
+
+Let's imagine that we are interested in the effect that salt stress (due to high concentrations of NaCl) could have on plant metabolism. For this purpose, we designed an experiment with cell cultures of <a href="https://academic.oup.com/jxb/article/58/3/415/556150" target="_blank">*Arabidopsis thaliana*</a> species and applied different concentrations of salt in the culture medium for different times. At the end of the treatment time, we recorded the relative amount of various metabolites of interest. See the figure below for clarity:
+
+![](/posts/pca-matabolomics/images/experiment.jpg){fig-align="center" width="800"}  
+
+It should be noted that salt stress is an important factor limiting plant growth and the experiment just described falls within the field of study of <a href="https://pubmed.ncbi.nlm.nih.gov/28196646/" target="_blank">metabolomics</a>, the study of the totality of compounds produced by the metabolism of living organisms.  
+
+For this tutorial I took as a basis the paper: <a href="https://pubmed.ncbi.nlm.nih.gov/17118972/" target="_blank">Time-course metabolic profiling in Arabidopsis thaliana cell cultures after salt stress treatment</a>. I simulated the relative quantity data from the means and standard deviations reported in this article. If you are interested in how I performed such a simulation, take a look at the `data_simulation.R` and `paper_data_processing.R` files in the repository of this tutorial: <a href="https://github.com/juanpa-biotech/pca-metabolomics/tree/master" target="_blank">Principal Component Analysis with Metabolomics Data</a>.  
+
+# Import data
+
+Data can be imported directly from the repository of this post with the following code:  
+
+```{r import dat, message=FALSE}
+main_data <- read_csv("https://raw.githubusercontent.com/juanpa-biotech/pca-metabolomics/master/data/main_data.csv")
+```
+
+We can display the first six rows of our data frame with the `head()` function:  
+
+```{r display data}
+head(main_data)
+```
+The `SAMPLE` column refers to the replicates of each treatment (salt concentration per given time), in this case three.  
+
+The names of the metabolites are as follows:  
+
+```{r metabolite names}
+met_names <- as_factor(main_data$MET)
+met_names <- levels(met_names)
+met_names
+```
+Let us first restructure the data in a suitable form for later use in the function in charge of performing the PCA:  
+
+```{r formating data for PCA}
+# Obtain wide data 
+main_data_wd <- main_data %>% 
+  mutate(SAMPLE_TIME = paste0(SAMPLE, "-", TIME)) %>% 
+  pivot_wider(names_from = SAMPLE_TIME, values_from = QT, id_cols = -TIME:-SAMPLE)
+
+# Transposing just quantity values
+qt_data <- t(main_data_wd[, -1])
+```
+
+Our new data matrix has the following structure:  
+
+```{r data matrix structure}
+qt_data[1:10, 1:10]
+```
+Each row indicates an experimental unit corresponding to a given salt concentration and time, while the columns indicate the relative amounts of each metabolite.  
+
+Now let's carry out the PCA directly with the `prcomp()` function:  
+
+```{r pca analysis}
+qt_pca <- prcomp(qt_data, scale. = FALSE)
+```
+
+When using this function, always remember to check the form of your data and be clear where the response variables and experimental units or replicates are marked. Usually we will be interested in reducing the number of dimensions with respect to the responses and trying to detect if there are similarities or differences between the experimental units of each treatment. With this in mind, when using `prcomp()` always make sure that the experimental units are positioned in the rows and the response variables in the columns. 
+
+On the other hand, the `scale.` argument refers to dividing each data (centered with respect to the average) by the standard deviation of the corresponding response or variable. It is recommended that this argument be set to `scale. = TRUE` when the data are not on the same measurement scale or you want to give equal importance to each variable regardless of its range or magnitude. Following what is reported in the article mentioned above, we use `scale. = FALSE`, which may be reasonable since the data are on the same relative scale.  
+
+Subsequently, let's generate a summary of the analysis with the `summary()` function:  
+
+```{r pca summary}
+summary(qt_pca)
+```
+In the summary above check the `Proportion of Variation` row. It can be seen that `PC1` and `PC2` explain most of the variability in the data.
+
+# Display of results
+
+Before making some graphs to help us visualize the results of the PCA, it may be useful to establish a single theme that applies to each graph:  
+
+```{r global theme}
+theme_set(
+  theme_classic() +
+    theme(
+      axis.text.x = element_text(color = "black", size = 13),
+      axis.text.y = element_text(color = "black", size = 13),
+      axis.title = element_text(color = "black", size = 15)
+    ) 
+)
+```
+
+## Bar chart with the percentages of variation of each main component
+
+To visualize the results of our analysis we need to extract some values from the `qt_pca` object. First let's extract the data in `qt_pca$sdev` and do some operations to represent the percentages of variation of each component:
+
+```{r variation percentages}
+# Calculate the variance of each principal component in PCA and store it in var_pca
+var_pca <- qt_pca$sdev^2
+
+# Calculate the percentage of total variance explained by each principal component
+per_var_pca <- round((var_pca / sum(var_pca)) * 100, 2)
+
+# Create a tibble (data frame) to store the results, with columns PC and PER_VAR
+per_var_pca <- tibble(
+  PC = 1:length(per_var_pca),
+  PER_VAR = per_var_pca
+)
+
+per_var_pca
+```
+
+Let's represent the data in per_var_pca with a bar chart:  
+
+```{r variation bar chart}
+bar_pca <- per_var_pca[1:6,] %>% 
+  ggplot(aes(x = as.factor(PC), y = PER_VAR)) +
+  geom_col() + 
+  xlab("PC") +
+  ylab("% of total variance")
+
+bar_pca
+```
+As can be seen, and as we also saw in the summary of the previous section, the first two components account for most of the variation observed in the data.  
+
+## Scatterplot with the first two principal components
+
+Since the first two components account for most of the variation, it is possible to make a two-dimensional plot that adequately represents all the data. We first extract the `qt_pca` scores and give an appropriate shape to the data frame:  
+
+```{r pca scores}
+pca_data <- as_tibble(qt_pca$x) %>% 
+  mutate(TIME = as_factor(substr(rownames(qt_pca$x), start = 3, stop =5))) %>% 
+  relocate(TIME)
+```
+
+Subsequently, let's make a scatter plot with the scores of the first two components:  
+
+```{r scatter plot for pc1 and pc2}
+pca_plot <- pca_data %>% 
+  mutate(TIME = as_factor(TIME)) %>% 
+  ggplot(aes(x = PC1, y = PC2, color = TIME)) +
+  geom_point(size = 3) +
+  xlab(paste0("PC1 (", per_var_pca$PER_VAR[1], "%)")) +
+  ylab(paste0("PC2 (", per_var_pca$PER_VAR[2], "%)")) +
+  scale_color_brewer(palette = "Dark2", name = "Time (h)")
+
+pca_plot
+```
+It is interesting to note that there are several well-defined groupings and differences. In particular, the samples at time 72 h are separated from the rest with respect to PC1, while the 24 h samples are separated with respect to PC2.  
+
+## Line graph with metabolite loadings
+
+Which metabolites contribute to the differences observed in the scatter plot above? Let us answer this question with the help of the weights or loadings.  
+
+Let us first extract the loads from `qt_pca` and also give a suitable shape to the data frame:  
+
+```{r pca loadings}
+# Compound names
+compound_names <- filter(main_data, SAMPLE == 1, TIME == 0.5) %>% 
+  select(MET) %>% 
+  unlist()          
+
+loadigns_data <- as_tibble(qt_pca$rotation) %>% 
+  signif(3) %>% 
+  mutate(MET = compound_names, INDEX = 1:length(MET)) %>% 
+  relocate(MET, INDEX) 
+```
+
+Let us define a small function that replaces with a blank space the name of the metabolite if the absolute value of its charge is less than a selected threshold:  
+
+```{r load_tr function}
+# Function to assign compound name if absolute value of loading is bigger than set threshold
+load_tr <- function(loadings, threshold, compound_name) {
+  compound_name[!abs(loadings) > threshold] <- " "
+  return(compound_name)
+}
+```
+
+In the following graph (PC1 loadings), using our function together with `geom_text()` shows the names of the metabolites whose load is greater than the selected threshold:  
+
+```{r pc1 loadings}
+load_line_pc1 <- loadigns_data %>% 
+  select(MET, INDEX, PC1) %>% 
+  mutate(
+    MET = load_tr(loading = PC1, threshold = 0.5, compound_name = MET)
+  ) %>% 
+  ggplot(aes(x = INDEX, y = PC1, label = MET)) +
+  geom_line() +
+  geom_text(fontface = "bold", position=position_nudge(), size = 2.5) +
+  xlab("Compound Index") +
+  ylab("Loadings")
+
+load_line_pc1
+```
+For PC2 the loadings are displayed in the same way:  
+
+```{r pc2 loadings}
+load_line_pc2 <- loadigns_data %>% 
+  select(MET, INDEX, PC2) %>% 
+  mutate(
+    MET = load_tr(loading = PC2, threshold = 0.19, compound_name = MET)
+  ) %>% 
+  ggplot(aes(x = INDEX, y = PC2, label = MET)) +
+  geom_line() +
+  geom_text(
+    fontface = "bold", position = position_nudge(), angle = -40, size = 2.5
+    ) +
+  xlab("Compound Index") +
+  ylab("Loadings")
+
+load_line_pc2
+```
+From both graphs we can tentatively define the metabolites that contributed most to the similarities or differences observed in the scatter plot of PC1 and PC2: lactate, sucrose, tryptophan, phenylalanine, glycerol, inositol, lysine, uric acid, tyrosine and sucrose.  
+
+It is important to note that the thresholds selected are similar to those of the aforementioned article. However, I believe it is important to be careful with the criteria for determining whether the loads can be considered "large" or "small". An alternative approach could be to simply take the tables with the loadings values and order them with respect to their absolute value, which would also allow us to determine the metabolites with the largest loadings.  
+
+## Patterns of metabolite variation
+
+Now that we know which compounds could be considered the most important, we can focus our attention on these metabolites and make a graph to see their pattern of behavior over time of stress treatment.  
+
+Let us first consider the most important metabolites with respect to PC1. From the original data, let us take only the lactate and sucrose data and obtain the average of the relative amounts at each treatment time. We can visualize the averages obtained with a line graph:  
+
+```{r pc1 metabolites, message=FALSE}
+met_plot_pc1 <- main_data %>% 
+  filter(MET == "lactate" | MET == "sucrose") %>% 
+  group_by(MET, TIME) %>% 
+  summarise(MEAN_QT = mean(QT)) %>% 
+  ggplot(aes(x = TIME, y = MEAN_QT, color = MET)) +
+  geom_line(size = 1) +
+  geom_point() +
+  xlab("Time (h)") +
+  ylab("Relative quantity")
+
+met_plot_pc1
+```
+It is noticeable that at 72 h the levels of these compounds increased greatly. This is probably the reason for the differences observed in the scatter plot of PC1 and PC2.  
+
+Let us repeat the same procedure for the most important metabolites with respect to PC2:  
+
+```{r pc2 metabolites, message=FALSE}
+met_plot_pc2 <- main_data %>% 
+  filter(MET == "tryptophan" | MET == "phenylalanine" | MET == "glycerol" |
+         MET == "tyrosine" | MET == "inositol" | MET == "lysine" |
+         MET == "uric acid") %>% 
+  group_by(MET, TIME) %>% 
+  summarise(MEAN_QT = mean(QT)) %>% 
+  ggplot(aes(x = TIME, y = MEAN_QT, color = MET)) +
+  geom_line(size = 1) +
+  geom_point() +
+  xlab("Time (h)") +
+  ylab("Relative quantity")
+
+met_plot_pc2
+```
+In this visualization we omit sucrose because we have already seen its behavior pattern. Although this graph is a little less clear, we can see that at 24 hours, the levels of metabolites such as glycerol and inositol increased, while the levels of aromatic amino acids decreased.  
+
+# Key points
+
+* In this tutorial on principal component analysis (PCA) applied to plant metabolomics data, simulated data from Arabidopsis thaliana cell cultures under salt stress were used.  
+
+* Through the implementation of the PCA with `prcomp()` and other functions included in `tidyverse` packages, clustering and correlations in the data could be observed.
+
+The code on this post is licensed under the [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)
+
+[![](https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg)](http://creativecommons.org/licenses/by/4.0/)
