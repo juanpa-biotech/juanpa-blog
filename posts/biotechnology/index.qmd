@@ -1,0 +1,40 @@
+---
+title: "What is biotechnology?"
+categories: ["science communication", "biotechnology"]
+date: "2023-12-19"
+description: "A brief explanation of what biotechnology is and some of its applications"
+---
+
+In general, biotechnology is defined as the use of living organisms for the production or improvement of goods and/or services. By living organisms, we mean complete organisms (plants, animals, microorganisms such as yeasts, etc.) or parts of them (cells, enzymes, DNA, RNA, etc.). On the other hand, to clarify what we mean by goods or services, let us list some examples. Biotechnology ranges from the production of bread, beer, cheese, and vinegar to the development of vaccines, soil bioremediation, and wastewater purification.
+
+![Beer in Egypt](/posts/biotechnology/images/img_1.jpg){fig-align="center" width="450"}
+
+As shown in the image above, the Egyptians were already using biotechnology for beer production more than 4,000 years ago. For the production of this beverage, a grain or cereal is needed, commonly barley, which is germinated a little to induce the activity of enzymes and generate sugars in the seed. In later steps, these sugars will be the food for microscopic fungi, known as yeasts, which will produce alcohol as a waste product. Depending on the process and the addition of other ingredients, it is now possible to find a wide variety of beers. Cheers!
+
+![A photograph of yeast obtained by electron microscopy](/posts/biotechnology/images/img_2.webp){fig-align="center" width="450"}
+
+At present, we essentially use killed pathogens, weakened live pathogens, or parts of even smaller organisms (viruses) to vaccinate us. The application of a vaccine, whether injected or given orally, will stimulate our immune system to be prepared for real infection scenarios. For the production of vaccines against some viruses, genetically modified yeast or mammalian cells are used to produce some component of the virus, which will ultimately be sufficient for our immune system to act against future infections.
+
+[![How the RNA vaccines work](/posts/biotechnology/images/img_3.png){fig-align="center" width="450"}](https://www.genome.gov/about-genomics/fact-sheets/Understanding-COVID-19-mRNA-Vaccines)
+
+In wastewater treatment, large tanks are used where bacteria, yeasts, cyanobacteria (blue algae), algae, protozoa, rotifers, mites, and nematodes (cylindrical worms) act together to degrade harmful substances in the water. It is also possible to use tank towers without air contact, where specialized bacteria (archaeobacteria) will degrade substances in the wastewater and produce methane gas, which can then be used as an energy source (biogas).
+
+![Wastewater treatment tanks](/posts/biotechnology/images/img_4.jpg){fig-align="center" width="450"}
+
+It goes without saying that biotechnology needs a lot of scientific disciplines: mathematics, chemistry, organic chemistry, biochemistry, molecular and cell biology, microbiology, and many others come together to support and shape it.
+
+[![Genetically modified organisms](/posts/biotechnology/images/img_5.webp){fig-align="center" width="450"}](https://www.britannica.com/technology/biotechnology)
+
+The above are just a few examples of how biotechnology is applied in various fields. Keep in mind that it is currently a very active field of research where knowledge is constantly being generated. Biotechnology is everywhere and is important in our daily lives!
+
+### To learn more about biotechnology
+
+Abdelfattah, A., Ali, S. S., Ramadan, H., El-Aswar, E. I., Eltawab, R., Ho, S.-H., Elsamahy, T., Li, S., El-Sheekh, M. M., Schagerl, M., Kornaros, M., & Sun, J. (2023). Microalgae-based wastewater treatment: Mechanisms, challenges, recent advances, and future prospects. *Environmental Science and Ecotechnology*, *13*, 100205. <https://doi.org/10.1016/j.ese.2022.100205>
+
+Capece, A., Romaniello, R., Siesto, G., & Romano, P. (2018). Conventional and non-conventional yeasts in beer production. *Fermentation*, *4*(2), 38. <https://doi.org/10.3390/fermentation4020038>
+
+Gupta, V., Sengupta, M., Prakash, J., & Tripathy, B. C. (2017). An introduction to biotechnology. En *Basic and Applied Aspects of Biotechnology* (pp. 1-21). Springer Singapore. <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7119977/>
+
+Renneberg, R., Berkling, V., & Loroch, V. (2017). Viruses, antibodies, and vaccines. En *Biotechnology for Beginners* (pp. 165-200). Elsevier. <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7149558/>
+
+The Editors of Encyclopædia Britannica. (2023). *Biotechnology*. Britannica. <https://www.britannica.com/technology/biotechnology>
