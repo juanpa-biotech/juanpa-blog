@@ -38,3 +38,7 @@ Gupta, V., Sengupta, M., Prakash, J., & Tripathy, B. C. (2017). An introduction 
 Renneberg, R., Berkling, V., & Loroch, V. (2017). Viruses, antibodies, and vaccines. En *Biotechnology for Beginners* (pp. 165-200). Elsevier. <https://www.ncbi.nlm.nih.gov/pmc/articles/PMC7149558/>
 
 The Editors of Encyclopædia Britannica. (2023). *Biotechnology*. Britannica. <https://www.britannica.com/technology/biotechnology>
+
+*The text in this publication is free to use under license [Creative Commons Attribution 4.0 International License](http://creativecommons.org/licenses/by/4.0/)*.
+
+[![](https://i.creativecommons.org/l/by/4.0/88x31.png)](http://creativecommons.org/licenses/by/4.0/)
