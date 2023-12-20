@@ -2,6 +2,7 @@
   {
     "listing": "/index.html",
     "items": [
+      "/posts/linear-algebra/index.html",
       "/posts/biotechnology/index.html",
       "/posts/pca-matabolomics/index.html",
       "/posts/pca-from-scratch/index.html",

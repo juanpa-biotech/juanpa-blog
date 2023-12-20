@@ -1,0 +1,1265 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.3.353">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="dcterms.date" content="2023-12-20">
+<meta name="description" content="A brief tutorial with R code to perform some linear algebra operations">
+
+<title>Juan Pablo Carreón Hidalgo - Basic Linear Algebra with R</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
+  vertical-align: middle;
+}
+/* CSS for syntax highlighting */
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+</style>
+
+
+<script src="../../site_libs/quarto-nav/quarto-nav.js"></script>
+<script src="../../site_libs/quarto-nav/headroom.min.js"></script>
+<script src="../../site_libs/clipboard/clipboard.min.js"></script>
+<script src="../../site_libs/quarto-search/autocomplete.umd.js"></script>
+<script src="../../site_libs/quarto-search/fuse.min.js"></script>
+<script src="../../site_libs/quarto-search/quarto-search.js"></script>
+<meta name="quarto:offset" content="../../">
+<script src="../../site_libs/quarto-html/quarto.js"></script>
+<script src="../../site_libs/quarto-html/popper.min.js"></script>
+<script src="../../site_libs/quarto-html/tippy.umd.min.js"></script>
+<script src="../../site_libs/quarto-html/anchor.min.js"></script>
+<link href="../../site_libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="../../site_libs/quarto-html/quarto-syntax-highlighting-dark.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<script src="../../site_libs/bootstrap/bootstrap.min.js"></script>
+<link href="../../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="../../site_libs/bootstrap/bootstrap.min.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="../../site_libs/bootstrap/bootstrap-dark.min.css" rel="prefetch" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<script id="quarto-search-options" type="application/json">{
+  "location": "navbar",
+  "copy-button": false,
+  "collapse-after": 3,
+  "panel-placement": "end",
+  "type": "overlay",
+  "limit": 20,
+  "language": {
+    "search-no-results-text": "No results",
+    "search-matching-documents-text": "matching documents",
+    "search-copy-link-title": "Copy link to search",
+    "search-hide-matches-text": "Hide additional matches",
+    "search-more-match-text": "more match in this document",
+    "search-more-matches-text": "more matches in this document",
+    "search-clear-button-title": "Clear",
+    "search-detached-cancel-button-title": "Cancel",
+    "search-submit-button-title": "Submit"
+  }
+}</script>
+
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+
+<link rel="stylesheet" href="../../styles.css">
+</head>
+
+<body class="floating nav-fixed">
+
+<div id="quarto-search-results"></div>
+  <header id="quarto-header" class="headroom fixed-top">
+    <nav class="navbar navbar-expand-lg navbar-dark ">
+      <div class="navbar-container container-fluid">
+      <div class="navbar-brand-container">
+    <a class="navbar-brand" href="../../index.html">
+    <span class="navbar-title">Juan Pablo Carreón Hidalgo</span>
+    </a>
+  </div>
+            <div id="quarto-search" class="" title="Search"></div>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+  <span class="navbar-toggler-icon"></span>
+</button>
+          <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav navbar-nav-scroll ms-auto">
+  <li class="nav-item">
+    <a class="nav-link" href="../../about.html" rel="" target="">
+ <span class="menu-text">About the author</span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://github.com/juanpa-biotech" rel="" target=""><i class="bi bi-github" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+  <li class="nav-item compact">
+    <a class="nav-link" href="https://twitter.com/juanpa_biotech" rel="" target=""><i class="bi bi-twitter" role="img">
+</i> 
+ <span class="menu-text"></span></a>
+  </li>  
+</ul>
+            <div class="quarto-navbar-tools">
+  <a href="" class="quarto-color-scheme-toggle quarto-navigation-tool  px-1" onclick="window.quartoToggleColorScheme(); return false;" title="Toggle dark mode"><i class="bi"></i></a>
+</div>
+          </div> <!-- /navcollapse -->
+      </div> <!-- /container-fluid -->
+    </nav>
+</header>
+<!-- content -->
+<header id="title-block-header" class="quarto-title-block default toc-left page-columns page-full">
+  <div class="quarto-title-banner page-columns page-full">
+    <div class="quarto-title column-body">
+      <h1 class="title">Basic Linear Algebra with R</h1>
+                  <div>
+        <div class="description">
+          A brief tutorial with R code to perform some linear algebra operations
+        </div>
+      </div>
+                          <div class="quarto-categories">
+                <div class="quarto-category">R</div>
+                <div class="quarto-category">tutorial</div>
+                <div class="quarto-category">linear algebra</div>
+              </div>
+                  </div>
+  </div>
+    
+  
+  <div class="quarto-title-meta">
+
+      
+      <div>
+      <div class="quarto-title-meta-heading">Published</div>
+      <div class="quarto-title-meta-contents">
+        <p class="date">December 20, 2023</p>
+      </div>
+    </div>
+    
+      
+    </div>
+    
+  
+  </header><div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article page-navbar">
+<!-- sidebar -->
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+    <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">On this page</h2>
+   
+  <ul>
+  <li><a href="#what-is-linear-algebra" id="toc-what-is-linear-algebra" class="nav-link active" data-scroll-target="#what-is-linear-algebra">What is linear algebra?</a></li>
+  <li><a href="#vector-operations" id="toc-vector-operations" class="nav-link" data-scroll-target="#vector-operations">Vector operations</a>
+  <ul class="collapse">
+  <li><a href="#vectors" id="toc-vectors" class="nav-link" data-scroll-target="#vectors">Vectors</a></li>
+  <li><a href="#sum" id="toc-sum" class="nav-link" data-scroll-target="#sum">Sum</a></li>
+  <li><a href="#multiplying-a-vector-by-a-scalar" id="toc-multiplying-a-vector-by-a-scalar" class="nav-link" data-scroll-target="#multiplying-a-vector-by-a-scalar">Multiplying a vector by a scalar</a></li>
+  <li><a href="#dot-or-inner-product" id="toc-dot-or-inner-product" class="nav-link" data-scroll-target="#dot-or-inner-product">Dot or inner product</a></li>
+  <li><a href="#norm" id="toc-norm" class="nav-link" data-scroll-target="#norm">Norm</a></li>
+  <li><a href="#scalar-projections" id="toc-scalar-projections" class="nav-link" data-scroll-target="#scalar-projections">Scalar Projections</a></li>
+  </ul></li>
+  <li><a href="#matrix-operations" id="toc-matrix-operations" class="nav-link" data-scroll-target="#matrix-operations">Matrix operations</a>
+  <ul class="collapse">
+  <li><a href="#matrices" id="toc-matrices" class="nav-link" data-scroll-target="#matrices">Matrices</a></li>
+  <li><a href="#matrix-multiplication-by-a-vector" id="toc-matrix-multiplication-by-a-vector" class="nav-link" data-scroll-target="#matrix-multiplication-by-a-vector">Matrix multiplication by a vector</a></li>
+  <li><a href="#matrix-multiplication" id="toc-matrix-multiplication" class="nav-link" data-scroll-target="#matrix-multiplication">Matrix multiplication</a></li>
+  <li><a href="#multiplication-of-a-matrix-by-a-scalar" id="toc-multiplication-of-a-matrix-by-a-scalar" class="nav-link" data-scroll-target="#multiplication-of-a-matrix-by-a-scalar">Multiplication of a matrix by a scalar</a></li>
+  <li><a href="#range-of-a-matrix" id="toc-range-of-a-matrix" class="nav-link" data-scroll-target="#range-of-a-matrix">Range of a matrix</a></li>
+  <li><a href="#inverse-of-a-matrix" id="toc-inverse-of-a-matrix" class="nav-link" data-scroll-target="#inverse-of-a-matrix">Inverse of a matrix</a></li>
+  <li><a href="#solving-systems-of-linear-equations" id="toc-solving-systems-of-linear-equations" class="nav-link" data-scroll-target="#solving-systems-of-linear-equations">Solving systems of linear equations</a></li>
+  <li><a href="#determinant-of-a-matrix" id="toc-determinant-of-a-matrix" class="nav-link" data-scroll-target="#determinant-of-a-matrix">Determinant of a matrix</a></li>
+  <li><a href="#transpose-of-a-matrix" id="toc-transpose-of-a-matrix" class="nav-link" data-scroll-target="#transpose-of-a-matrix">Transpose of a Matrix</a></li>
+  <li><a href="#identity-matrix" id="toc-identity-matrix" class="nav-link" data-scroll-target="#identity-matrix">Identity matrix</a></li>
+  <li><a href="#eigenvalues-and-eingenvectors" id="toc-eigenvalues-and-eingenvectors" class="nav-link" data-scroll-target="#eigenvalues-and-eingenvectors">Eigenvalues and eingenvectors</a></li>
+  <li><a href="#gram-schmidt-process" id="toc-gram-schmidt-process" class="nav-link" data-scroll-target="#gram-schmidt-process">Gram-Schmidt process</a></li>
+  </ul></li>
+  <li><a href="#calculation-of-mean-and-variance-with-linear-algebra-operations" id="toc-calculation-of-mean-and-variance-with-linear-algebra-operations" class="nav-link" data-scroll-target="#calculation-of-mean-and-variance-with-linear-algebra-operations">Calculation of mean and variance with linear algebra operations</a>
+  <ul class="collapse">
+  <li><a href="#mean" id="toc-mean" class="nav-link" data-scroll-target="#mean">Mean</a></li>
+  <li><a href="#sample-variance" id="toc-sample-variance" class="nav-link" data-scroll-target="#sample-variance">Sample variance</a></li>
+  </ul></li>
+  </ul>
+</nav>
+</nav>
+<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<!-- margin-sidebar -->
+    <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
+    </div>
+<!-- main -->
+<main class="content quarto-banner-title-block" id="quarto-document-content">
+
+
+
+
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../..\posts/linear-algebra/images/325px-Linear_subspaces_with_shading.svg.png" class="img-fluid figure-img"></p>
+</figure>
+</div>
+<section id="what-is-linear-algebra" class="level1">
+<h1>What is linear algebra?</h1>
+<p><a href="https://www.math.ucdavis.edu/~linear/linear-guest.pdf" target="_blank"><em>Linear algebra</em></a> <em>is the study of vectors and linear functions</em>. In this post, I’m going to show you how to perform some basic linear algebra operations with R code.</p>
+</section>
+<section id="vector-operations" class="level1">
+<h1>Vector operations</h1>
+<section id="vectors" class="level2">
+<h2 class="anchored" data-anchor-id="vectors">Vectors</h2>
+<p>A vector is a mathematical object that possesses both magnitude and direction. In other words, a vector is a mathematical entity representing a physical quantity with both a size (or magnitude) and a specific orientation in space. Vectors are used to describe displacements, velocities, forces, and other concepts in mathematics, physics, and other disciplines.</p>
+<p>Formally, a vector in three-dimensional space <span class="math inline">\(\mathbb{R}^3\)</span> can be represented as an ordered triplet of real numbers <span class="math inline">\((a, b, c)\)</span>, where <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, and <span class="math inline">\(c\)</span> are the components of the vector along the x, y, and z axes, respectively. In general, in an <span class="math inline">\(n\)</span>-dimensional space <span class="math inline">\(\mathbb{R}^n\)</span>, a vector is represented as an <span class="math inline">\(n\)</span>-tuple <span class="math inline">\((a_1, a_2, \ldots, a_n)\)</span>.</p>
+<p>Vectors can also be geometrically represented as arrows in a coordinate system, where the length of the arrow represents the magnitude of the vector, and the direction of the arrow represents the orientation of the vector in space.</p>
+<p>To define vectors, in this case in twodimensions, we can use the function <code>c()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define three vectors in two dimensions</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>a <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">3</span>, <span class="dv">1</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>b <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">1</span>, <span class="sc">-</span><span class="dv">3</span>)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>c <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="sc">-</span><span class="dv">2</span>, <span class="dv">2</span>)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the vectors</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>a</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -3  1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>b</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1]  1 -3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>c</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2  2</code></pre>
+</div>
+</div>
+<p>The above vectors can be represented visually as follows (code not shown):</p>
+<div class="cell">
+<div class="cell-output-display">
+<p><img src="index_files/figure-html/2D vector-1.png" class="img-fluid" width="672"></p>
+</div>
+</div>
+<p>To create vectors in four dimensions, we use the same procedure, but add more elements to each vector:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define two vectors in fourth dimensions</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>x <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">30</span>, <span class="dv">20</span>, <span class="dv">40</span>, <span class="dv">10</span>)</span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">20</span>, <span class="dv">15</span>, <span class="dv">18</span>, <span class="dv">40</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The above procedure can be generalized to any vector in <span class="math inline">\(\mathbb{R}^n\)</span>.</p>
+</section>
+<section id="sum" class="level2">
+<h2 class="anchored" data-anchor-id="sum">Sum</h2>
+<p>The sum of two vectors is a mathematical operation that involves adding the corresponding components of the two vectors. Let <span class="math inline">\(\mathbf{A} = (a_1, a_2, \ldots, a_n)\)</span> and <span class="math inline">\(\mathbf{B} = (b_1, b_2, \ldots, b_n)\)</span> be two vectors in <span class="math inline">\(\mathbb{R}^n\)</span>. The sum of <span class="math inline">\(\mathbf{A}\)</span> and <span class="math inline">\(\mathbf{B}\)</span> is denoted as <span class="math inline">\(\mathbf{A} + \mathbf{B}\)</span> and is calculated as follows:</p>
+<p><span class="math inline">\(\mathbf{A} + \mathbf{B} = (a_1 + b_1, a_2 + b_2, \ldots, a_n + b_n)\)</span></p>
+<p>In other words, the sum of two vectors produces a new vector whose components are the sum of the corresponding components of the original vectors.</p>
+<p>Some important properties of vector addition include commutativity (<span class="math inline">\(\mathbf{A} + \mathbf{B} = \mathbf{B} + \mathbf{A}\)</span>), associativity <span class="math inline">\((\mathbf{A} + \mathbf{B}) + \mathbf{C} = \mathbf{A} + (\mathbf{B} + \mathbf{C})\)</span>, and the existence of a zero vector (<span class="math inline">\(\mathbf{0} + \mathbf{A} = \mathbf{A} + \mathbf{0} = \mathbf{A}\)</span>, where <span class="math inline">\(\mathbf{0}\)</span> is the zero vector).</p>
+<p>Vector addition is a fundamental operation in linear algebra and is used in various contexts, such as representing displacements in physics, combining forces, and defining more advanced operations in vector spaces.</p>
+<p>With R code you can add vectors with the same length:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">+</span> y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 50 35 58 50</code></pre>
+</div>
+</div>
+<p>If the vectors don’t have the same length, the elements of the smallest will be recycled:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">+</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">10</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 40 30 50 20</code></pre>
+</div>
+</div>
+</section>
+<section id="multiplying-a-vector-by-a-scalar" class="level2">
+<h2 class="anchored" data-anchor-id="multiplying-a-vector-by-a-scalar">Multiplying a vector by a scalar</h2>
+<p>The multiplication of a vector by a scalar is a mathematical operation that involves multiplying each component of the vector by the scalar. Let <span class="math inline">\(\mathbf{V}\)</span> be a vector and <span class="math inline">\(k\)</span> be a scalar; the multiplication of the vector by the scalar is denoted as <span class="math inline">\(k \cdot \mathbf{V}\)</span> and is calculated as follows:</p>
+<p>If <span class="math inline">\(\mathbf{V} = (v_1, v_2, \ldots, v_n)\)</span>, then</p>
+<p><span class="math inline">\(k \cdot \mathbf{V} = (k \cdot v_1, k \cdot v_2, \ldots, k \cdot v_n)\)</span></p>
+<p>In other words, each component of the original vector is multiplied by the scalar, producing a new vector whose components are the product of each component of the original vector by the scalar.</p>
+<p>This operation has various properties, such as associativity <span class="math inline">\((a \cdot b) \cdot \mathbf{V} = a \cdot (b \cdot \mathbf{V})\)</span>, distributivity with respect to the sum of vectors <span class="math inline">\(k \cdot (\mathbf{A} + \mathbf{B}) = k \cdot \mathbf{A} + k \cdot \mathbf{B}\)</span>, and distributivity with respect to the sum of scalars <span class="math inline">\((a + b) \cdot \mathbf{V} = a \cdot \mathbf{V} + b \cdot \mathbf{V}\)</span>.</p>
+<p>To multiply by a scalar, we use the operator <code>*</code> as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dv">10</span> <span class="sc">*</span> x</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 300 200 400 100</code></pre>
+</div>
+</div>
+</section>
+<section id="dot-or-inner-product" class="level2">
+<h2 class="anchored" data-anchor-id="dot-or-inner-product">Dot or inner product</h2>
+<p>The dot product, also known as the scalar product or inner product, is a mathematical operation between two vectors that results in a scalar (a single number). The dot product of two vectors <span class="math inline">\(\mathbf{A} = (a_1, a_2, \ldots, a_n)\)</span> and <span class="math inline">\(\mathbf{B} = (b_1, b_2, \ldots, b_n)\)</span> is commonly denoted as <span class="math inline">\(\mathbf{A} \cdot \mathbf{B}\)</span> and is calculated as follows:</p>
+<p><span class="math inline">\(\mathbf{A} \cdot \mathbf{B} = a_1 \cdot b_1 + a_2 \cdot b_2 + \ldots + a_n \cdot b_n\)</span></p>
+<p>In other words, you multiply the corresponding components of the two vectors and sum these products. The result is a scalar, not a vector.</p>
+<p>Some important properties of the dot product include commutativity (<span class="math inline">\(\mathbf{A} \cdot \mathbf{B} = \mathbf{B} \cdot \mathbf{A}\)</span>), distributivity with respect to the sum of vectors (<span class="math inline">\(\mathbf{A} \cdot (\mathbf{B} + \mathbf{C}) = \mathbf{A} \cdot \mathbf{B} + \mathbf{A} \cdot \mathbf{C}\)</span>), and scalar multiplication (<span class="math inline">\(k \cdot (\mathbf{A} \cdot \mathbf{B}) = (k \cdot \mathbf{A}) \cdot \mathbf{B} = \mathbf{A} \cdot (k \cdot \mathbf{B})\)</span>), where (<em>k</em>) is a scalar.</p>
+<p>The dot product has various applications in geometry, physics, and other mathematical disciplines, and it is fundamental in defining concepts such as vector length, vector projection, and angles between vectors.</p>
+<p>In R we use the operator <code>%*%</code> to perform the dot product:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb14"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>x <span class="sc">%*%</span> y</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,] 2020</code></pre>
+</div>
+</div>
+<p>Note that this operator returns an object with the classes “matrix” and “array”:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">class</span>(x <span class="sc">%*%</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] "matrix" "array" </code></pre>
+</div>
+</div>
+<p>If you need just the numeric value, use the <code>as.numeric()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="fu">as.numeric</span>(x <span class="sc">%*%</span> y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2020</code></pre>
+</div>
+</div>
+</section>
+<section id="norm" class="level2">
+<h2 class="anchored" data-anchor-id="norm">Norm</h2>
+<p>The norm of a vector, also known as magnitude or length, is a measure that indicates the absolute size of the vector in Euclidean space. The norm of a vector <span class="math inline">\(\mathbf{v}\)</span> in an <span class="math inline">\(n\)</span>-dimensional space, commonly denoted as <span class="math inline">\(\|\mathbf{v}\|\)</span> or <span class="math inline">\(\|\mathbf{v}\|_2\)</span>, is calculated using the following formula:</p>
+<p><span class="math inline">\(\|\mathbf{v}\| = \sqrt{v_1^2 + v_2^2 + \ldots + v_n^2}\)</span></p>
+<p>In other words, the norm of a vector is the square root of the sum of the squares of its individual components. This is derived from the Euclidean distance in <span class="math inline">\(n\)</span>-dimensional space.</p>
+<p>Some important properties of the norm include:</p>
+<ol type="1">
+<li><span class="math inline">\(\|\mathbf{v}\| \geq 0\)</span>: The norm of a vector is always non-negative.</li>
+<li><span class="math inline">\(\|\mathbf{v}\| = 0\)</span> if and only if <span class="math inline">\(\mathbf{v} = \mathbf{0}\)</span>, where <span class="math inline">\(\mathbf{0}\)</span> is the zero vector.</li>
+<li><span class="math inline">\(\|\alpha \cdot \mathbf{v}\| = |\alpha| \cdot \|\mathbf{v}\|\)</span> for any scalar <span class="math inline">\(\alpha\)</span>.</li>
+<li>Triangle Inequality: <span class="math inline">\(\|\mathbf{u} + \mathbf{v}\| \leq \|\mathbf{u}\| + \|\mathbf{v}\|\)</span>.</li>
+</ol>
+<p>With R code, the norm or magnitude of a vector can be obtained as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb20"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="fu">sqrt</span>(x <span class="sc">%*%</span> x)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1]
+[1,] 54.77226</code></pre>
+</div>
+</div>
+<p>With a vector defined as a matrix object, you can also obtain the magnitude with the function <code>norm</code> :</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb22"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="fu">norm</span>(<span class="fu">as.matrix</span>(x), <span class="at">type =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 54.77226</code></pre>
+</div>
+</div>
+</section>
+<section id="scalar-projections" class="level2">
+<h2 class="anchored" data-anchor-id="scalar-projections">Scalar Projections</h2>
+<p>The scalar projection of a vector <span class="math inline">\(\mathbf{s}\)</span> onto another vector <span class="math inline">\(\mathbf{r}\)</span> is the length of the projection of <span class="math inline">\(\mathbf{s}\)</span> onto the direction of <span class="math inline">\(\mathbf{r}\)</span>. It is commonly denoted as <span class="math inline">\(\text{proj}_{\mathbf{r}}(\mathbf{s})\)</span> and is calculated using the following formula:</p>
+<p><span class="math inline">\(\text{proj}_{\mathbf{r}}(\mathbf{s}) = \frac{\mathbf{s} \cdot \mathbf{r}}{\|\mathbf{r}\|}\)</span></p>
+<p>Where:</p>
+<ul>
+<li><p><span class="math inline">\(\mathbf{s} \cdot \mathbf{r}\)</span> denotes the dot product between the two vectors.</p></li>
+<li><p><span class="math inline">\(\|\mathbf{r}\|\)</span> is the norm (magnitude) of <span class="math inline">\(\mathbf{r}\)</span>.</p></li>
+</ul>
+<p>The scalar projection of <span class="math inline">\(\mathbf{s}\)</span> onto <span class="math inline">\(\mathbf{r}\)</span> represents the length of the line segment connecting the origin to the point where <span class="math inline">\(\mathbf{s}\)</span> projects onto the line following the direction of <span class="math inline">\(\mathbf{r}\)</span>.</p>
+<p>In R, the scalar projection of a vector <code>s</code> onto a vector <code>r</code> can be obtained with the next code:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb24"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">3</span>, <span class="sc">-</span><span class="dv">4</span>, <span class="dv">0</span>)</span>
+<span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">10</span>, <span class="dv">5</span>, <span class="sc">-</span><span class="dv">6</span>)</span>
+<span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb24-4"><a href="#cb24-4" aria-hidden="true" tabindex="-1"></a>r <span class="sc">%*%</span> s <span class="sc">/</span> <span class="fu">sqrt</span>(r <span class="sc">%*%</span> r)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]    2</code></pre>
+</div>
+</div>
+<p>In a similar way, you can obtain the vector projection of <code>s</code> onto <code>r</code> using the function <code>norm()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb26"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>r <span class="sc">%*%</span> s <span class="sc">/</span> <span class="fu">norm</span>(<span class="fu">as.matrix</span>(r), <span class="at">type =</span> <span class="st">"F"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]    2</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="matrix-operations" class="level1">
+<h1>Matrix operations</h1>
+<section id="matrices" class="level2">
+<h2 class="anchored" data-anchor-id="matrices">Matrices</h2>
+<p>In linear algebra, a matrix is a two-dimensional array of numbers, symbols, or mathematical expressions arranged in rows and columns. A matrix is typically represented by uppercase letters, such as A, B, C, etc., and its elements are denoted by indices indicating the position of a number in the matrix.</p>
+<p>For example, a matrix A of size <em>m × n</em> is denoted as:</p>
+<p><span class="math inline">\(A = \begin{bmatrix} a_{11} &amp; a_{12} &amp; \dots &amp; a_{1n} \\ a_{21} &amp; a_{22} &amp; \dots &amp; a_{2n} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ a_{m1} &amp; a_{m2} &amp; \dots &amp; a_{mn} \end{bmatrix}\)</span></p>
+<p>Here, <span class="math inline">\(a_{ij}\)</span> represents the element in the <em>ith</em> row and <em>jth</em> column of the matrix. In this context, <em>m</em> is the number of rows, and <em>n</em> is the number of columns. When the number of rows is equal to the number of columns (<em>m</em> = <em>n</em>), it is called a square matrix.</p>
+<p>Matrices are used in linear algebra to represent and manipulate systems of linear equations, linear transformations, and in various contexts in mathematics, physics, statistics, computer science, and other disciplines. Basic operations with matrices include addition, subtraction, scalar multiplication, and matrix multiplication.</p>
+<p>In R, we use the function <code>matrix()</code> to define matrices:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb28"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Define a matrix</span></span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">7</span>, <span class="sc">-</span><span class="dv">6</span>, <span class="dv">12</span>, <span class="dv">8</span>)</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>m <span class="ot">&lt;-</span> <span class="fu">matrix</span>(m, <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>m</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    7   -6
+[2,]   12    8</code></pre>
+</div>
+</div>
+</section>
+<section id="matrix-multiplication-by-a-vector" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-multiplication-by-a-vector">Matrix multiplication by a vector</h2>
+<p>Matrix-vector multiplication is a fundamental operation in linear algebra. Given a matrix <span class="math inline">\(A\)</span> of dimensions <span class="math inline">\(m \times n\)</span> and a column vector <span class="math inline">\(\mathbf{v}\)</span> of dimension <span class="math inline">\(n \times 1\)</span>, the product of the matrix by the vector, denoted as <span class="math inline">\(A \mathbf{v}\)</span>, results in a new column vector of dimension <span class="math inline">\(m \times 1\)</span>.</p>
+<p>The operation is performed by multiplying each element in a matrix row by the corresponding element in the vector and summing the resulting products. The element in the <span class="math inline">\(i\)</span>-th position of the resulting vector is the sum of the products of the elements in the <span class="math inline">\(i\)</span>-th row of the matrix and the corresponding elements in the vector.</p>
+<p>The mathematical expression for the multiplication of a matrix <span class="math inline">\(A\)</span> by a column vector <span class="math inline">\(\mathbf{v}\)</span> can be written as follows:</p>
+<p><span class="math inline">\(A \mathbf{v} = \begin{bmatrix} a_{11} &amp; a_{12} &amp; \dots &amp; a_{1n} \\ a_{21} &amp; a_{22} &amp; \dots &amp; a_{2n} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ a_{m1} &amp; a_{m2} &amp; \dots &amp; a_{mn} \end{bmatrix} \begin{bmatrix} v_1 \\ v_2 \\ \vdots \\ v_n \end{bmatrix} = \begin{bmatrix} (a_{11}v_1 + a_{12}v_2 + \dots + a_{1n}v_n) \\ (a_{21}v_1 + a_{22}v_2 + \dots + a_{2n}v_n) \\ \vdots \\ (a_{m1}v_1 + a_{m2}v_2 + \dots + a_{mn}v_n) \end{bmatrix}\)</span></p>
+<p>It’s important to note that matrix-vector multiplication is defined when the number of columns in the matrix is equal to the number of rows in the vector. In this case, the result is a new vector with the same number of rows as the matrix and the same number of columns as the original vector.</p>
+<p>To perform this operation in R, we use the operator <code>%*%</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb30"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix multiplication by a vector</span></span>
+<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>v <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">5</span>, <span class="dv">6</span>)</span>
+<span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>m <span class="sc">%*%</span> v</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]   -1
+[2,]  108</code></pre>
+</div>
+</div>
+</section>
+<section id="matrix-multiplication" class="level2">
+<h2 class="anchored" data-anchor-id="matrix-multiplication">Matrix multiplication</h2>
+<p>Matrix multiplication is an algebraic operation that combines two matrices to produce a third matrix. Given two matrices <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, where matrix <span class="math inline">\(A\)</span> has dimensions <span class="math inline">\(m \times n\)</span> and matrix <span class="math inline">\(B\)</span> has dimensions <span class="math inline">\(n \times p\)</span>, the product of <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span>, denoted as <span class="math inline">\(AB\)</span>, results in a new matrix <span class="math inline">\(C\)</span> with dimensions <span class="math inline">\(m \times p\)</span>.</p>
+<p>The operation is performed by multiplying each element in a row of the first matrix by the corresponding element in the column of the second matrix and summing the resulting products. The entry in the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column of the resulting matrix <span class="math inline">\(C\)</span> is the result of this sum for the intersection of the <span class="math inline">\(i\)</span>-th row of <span class="math inline">\(A\)</span> and the <span class="math inline">\(j\)</span>-th column of <span class="math inline">\(B\)</span>.</p>
+<p>The mathematical expression for matrix multiplication can be represented as follows:</p>
+<p><span class="math inline">\(C_{ij} = \sum_{k=1}^{n} A_{ik} \cdot B_{kj}\)</span></p>
+<p>where <span class="math inline">\(C_{ij}\)</span> is the element in the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(j\)</span>-th column of matrix <span class="math inline">\(C\)</span>, <span class="math inline">\(A_{ik}\)</span> is the element in the <span class="math inline">\(i\)</span>-th row and <span class="math inline">\(k\)</span>-th column of matrix <span class="math inline">\(A\)</span>, and <span class="math inline">\(B_{kj}\)</span> is the element in the <span class="math inline">\(k\)</span>-th row and <span class="math inline">\(j\)</span>-th column of matrix <span class="math inline">\(B\)</span>.</p>
+<p>It is important to note that for matrix multiplication to be defined, the number of columns in the first matrix must be equal to the number of rows in the second matrix. The resulting matrix has the number of rows of the first matrix and the number of columns of the second matrix.</p>
+<p>To perform multiplications between matrices, we use the operator <code>%*%</code>. Always be sure that the number of columns in the first matrix is the same as the number of rows in the second:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb32"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A matrix of 2 x 3</span></span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    2    3
+[2,]    4    0    1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb34"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A matrix of 3 x 3</span></span>
+<span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>B <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb34-3"><a href="#cb34-3" aria-hidden="true" tabindex="-1"></a>B</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    1    0
+[2,]    0    1    1
+[3,]    1    0    1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix multiplication</span></span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a>A <span class="sc">%*%</span> B</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    4    3    5
+[2,]    5    4    1</code></pre>
+</div>
+</div>
+</section>
+<section id="multiplication-of-a-matrix-by-a-scalar" class="level2">
+<h2 class="anchored" data-anchor-id="multiplication-of-a-matrix-by-a-scalar">Multiplication of a matrix by a scalar</h2>
+<p>Scalar multiplication by a matrix is an operation in which each element of the matrix is multiplied by the given scalar. Given a scalar <span class="math inline">\(c\)</span> and a matrix <span class="math inline">\(A\)</span> of dimensions <span class="math inline">\(m \times n\)</span>, the product of <span class="math inline">\(c\)</span> by <span class="math inline">\(A\)</span>, denoted as <span class="math inline">\(cA\)</span>, is obtained by multiplying each element of <span class="math inline">\(A\)</span> by <span class="math inline">\(c\)</span>, resulting in a new matrix of the same size <span class="math inline">\(m \times n\)</span>.</p>
+<p>The mathematical expression for scalar multiplication by a matrix can be written as:</p>
+<p><span class="math inline">\(c \cdot A = \begin{bmatrix} c \cdot a_{11} &amp; c \cdot a_{12} &amp; \dots &amp; c \cdot a_{1n} \\ c \cdot a_{21} &amp; c \cdot a_{22} &amp; \dots &amp; c \cdot a_{2n} \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ c \cdot a_{m1} &amp; c \cdot a_{m2} &amp; \dots &amp; c \cdot a_{mn} \end{bmatrix}\)</span></p>
+<p>Where <span class="math inline">\(a_{ij}\)</span> represents the elements of matrix <span class="math inline">\(A\)</span>. Each element of the resulting matrix <span class="math inline">\(cA\)</span> is simply the product of the scalar <span class="math inline">\(c\)</span> with the corresponding element of matrix <span class="math inline">\(A\)</span>.</p>
+<p>As with vectors, we use the operator <code>*</code> to perfrom this operation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Matrix multiplication by a scalar</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a><span class="dv">100</span> <span class="sc">*</span> A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]  100  200  300
+[2,]  400    0  100</code></pre>
+</div>
+</div>
+</section>
+<section id="range-of-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="range-of-a-matrix">Range of a matrix</h2>
+<p>The rank of a matrix is a measure indicating the maximum number of linearly independent rows or columns in the matrix. We can calculate the rank for both rectangular and square matrices. The specific definition may vary depending on whether you are dealing with the row rank or column rank, but both are related.</p>
+<ol type="1">
+<li><p><em>Row Rank Definition:</em> The row rank of a matrix is the maximum number of linearly independent rows in the matrix.</p></li>
+<li><p><em>Column Rank Definition:</em> The column rank of a matrix is the maximum number of linearly independent columns in the matrix.</p></li>
+</ol>
+<p>In more general terms, the rank of a matrix can be defined as the dimension of the space spanned by its row or column vectors. An important fact about the rank of a matrix is that the row rank is always equal to the column rank. This is known as the rank theorem and is a crucial property highlighting the relationship between the rows and columns of a matrix.</p>
+<p>To calculate the rank of a matrix we use the function <code>qr()</code> as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb40"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A matrix of 3 x 3</span></span>
+<span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="sc">-</span><span class="dv">3</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">3</span>, <span class="dv">0</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb40-3"><a href="#cb40-3" aria-hidden="true" tabindex="-1"></a>C</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    0    1
+[2,]   -2   -3    1
+[3,]    3    3    0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb42"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb42-1"><a href="#cb42-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank of matrix C</span></span>
+<span id="cb42-2"><a href="#cb42-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qr</span>(C)<span class="sc">$</span>rank</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb44"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb44-1"><a href="#cb44-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A matrix of 2 x 4 </span></span>
+<span id="cb44-2"><a href="#cb44-2" aria-hidden="true" tabindex="-1"></a>D <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">2</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="sc">-</span><span class="dv">1</span>, <span class="dv">0</span>, <span class="sc">-</span><span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb44-3"><a href="#cb44-3" aria-hidden="true" tabindex="-1"></a>D</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4]
+[1,]    1    1    0    2
+[2,]   -1   -1    0   -2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb46"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Rank of matrix D</span></span>
+<span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a><span class="fu">qr</span>(D)<span class="sc">$</span>rank</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 1</code></pre>
+</div>
+</div>
+</section>
+<section id="inverse-of-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="inverse-of-a-matrix">Inverse of a matrix</h2>
+<p>The inverse of a matrix is a fundamental concept in linear algebra. Given a square matrix <span class="math inline">\(A\)</span>, <span class="math inline">\(A^{-1}\)</span> is said to be the inverse of <span class="math inline">\(A\)</span> if the product of <span class="math inline">\(A\)</span> by <span class="math inline">\(A^{-1}\)</span> (or <span class="math inline">\(A^{-1}\)</span> by <span class="math inline">\(A\)</span>) is equal to the identity matrix <span class="math inline">\(I\)</span>, of the same size as <span class="math inline">\(A\)</span>. Mathematically, this is expressed as:</p>
+<p><span class="math inline">\(A \cdot A^{-1} = A^{-1} \cdot A = I\)</span></p>
+<p>Where: * <span class="math inline">\(A\)</span> is the original matrix. * <span class="math inline">\(A^{-1}\)</span> is the inverse matrix. * <span class="math inline">\(I\)</span> is the identity matrix.</p>
+<p>It’s important to note that not all matrices have an inverse. For a matrix to have an inverse, it must be a square matrix, and it must be nonsingular, meaning its determinant should not be equal to zero.</p>
+<p>If a matrix <span class="math inline">\(A\)</span> has an inverse, it is denoted as <span class="math inline">\(A^{-1}\)</span>, and it satisfies:</p>
+<p><span class="math inline">\(A \cdot A^{-1} = A^{-1} \cdot A = I\)</span></p>
+<p>The inverse matrix has important properties, such as the inverse of the inverse (<span class="math inline">\((A^{-1})^{-1} = A\)</span>) and the inverse of the product of matrices (<span class="math inline">\((AB)^{-1} = B^{-1}A^{-1}\)</span>), among others.</p>
+<p>To calculate the inverse of a matrix we use the <code>solve()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb48"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">9</span>)</span>
+<span id="cb48-2"><a href="#cb48-2" aria-hidden="true" tabindex="-1"></a><span class="co"># A matrix of 4 x 4 </span></span>
+<span id="cb48-3"><a href="#cb48-3" aria-hidden="true" tabindex="-1"></a>E <span class="ot">&lt;-</span> <span class="fu">matrix</span>(</span>
+<span id="cb48-4"><a href="#cb48-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">round</span>(<span class="fu">runif</span>(<span class="dv">16</span>, <span class="at">min =</span> <span class="dv">1</span>, <span class="at">max =</span> <span class="dv">30</span>), <span class="dv">0</span>), </span>
+<span id="cb48-5"><a href="#cb48-5" aria-hidden="true" tabindex="-1"></a>  <span class="at">nrow =</span> <span class="dv">4</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span></span>
+<span id="cb48-6"><a href="#cb48-6" aria-hidden="true" tabindex="-1"></a>)</span>
+<span id="cb48-7"><a href="#cb48-7" aria-hidden="true" tabindex="-1"></a>E</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4]
+[1,]    7    2    7    7
+[2,]   14    5   12   12
+[3,]   20   30    4    1
+[4,]   27   10   15   16</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb50"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Inverse of matrix E</span></span>
+<span id="cb50-2"><a href="#cb50-2" aria-hidden="true" tabindex="-1"></a>E_i <span class="ot">&lt;-</span> <span class="fu">solve</span>(E)</span>
+<span id="cb50-3"><a href="#cb50-3" aria-hidden="true" tabindex="-1"></a>E_i</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>           [,1]       [,2]       [,3]       [,4]
+[1,]  -6.597222   4.472222 -0.1527778 -0.4583333
+[2,]   7.305556  -5.055556  0.1944444  0.5833333
+[3,] -30.625000  21.750000 -0.6250000 -2.8750000
+[4,]  35.277778 -24.777778  0.7222222  3.1666667</code></pre>
+</div>
+</div>
+</section>
+<section id="solving-systems-of-linear-equations" class="level2">
+<h2 class="anchored" data-anchor-id="solving-systems-of-linear-equations">Solving systems of linear equations</h2>
+<p>A system of linear equations is a set of two or more linear equations that share a common set of variables. Each linear equation within the system represents a linear relationship between the variables. In general, a system of linear equations can be expressed as follows:</p>
+<p><span class="math inline">\(\begin{cases} a_{11}x_1 + a_{12}x_2 + \ldots + a_{1n}x_n = b_1 \\ a_{21}x_1 + a_{22}x_2 + \ldots + a_{2n}x_n = b_2 \\ \vdots \\ a_{m1}x_1 + a_{m2}x_2 + \ldots + a_{mn}x_n = b_m \end{cases}\)</span></p>
+<p>Where:</p>
+<ul>
+<li><p><span class="math inline">\(x_1, x_2, \ldots, x_n\)</span> are the variables of the system.</p></li>
+<li><p><span class="math inline">\(a_{ij}\)</span> are the coefficients accompanying the variables.</p></li>
+<li><p><span class="math inline">\(b_i\)</span> are the constant terms in each equation.</p></li>
+<li><p>The system has <span class="math inline">\(m\)</span> linear equations.</p></li>
+</ul>
+<p>The typical goal when solving a system of linear equations is to find the values of the variables <span class="math inline">\(x_1, x_2, \ldots, x_n\)</span> that satisfy all the equations simultaneously. These values represent the solution to the system. Depending on the nature of the system, it may have a unique solution, no solution, or infinitely many solutions. Common methods for solving systems of linear equations include substitution, elimination, and the use of matrices.</p>
+<p>Now let us define the following system of linear equations. We want to obtain the values of <span class="math inline">\(a\)</span>, <span class="math inline">\(b\)</span>, and <span class="math inline">\(c\)</span> that satisfied the system:</p>
+<ul>
+<li><span class="math inline">\((1): a + b + c = 15\)</span></li>
+<li><span class="math inline">\((2): 3a + 2b + c = 28\)</span></li>
+<li><span class="math inline">\((3): 2a + b + 2c = 23\)</span></li>
+</ul>
+<p>First, define a matrix with the system coefficients and a vector with the results or constants for each equation:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb52"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coefficient matrix</span></span>
+<span id="cb52-2"><a href="#cb52-2" aria-hidden="true" tabindex="-1"></a>C <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">1</span>, <span class="dv">3</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">2</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb52-3"><a href="#cb52-3" aria-hidden="true" tabindex="-1"></a>C</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    1    1
+[2,]    3    2    1
+[3,]    2    1    2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb54"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Constant vector </span></span>
+<span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> <span class="fu">c</span>(<span class="dv">15</span>, <span class="dv">28</span>, <span class="dv">23</span>)</span>
+<span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a>r</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 15 28 23</code></pre>
+</div>
+</div>
+<p>Next, obtain the inverse of the coefficient matrix using the <code>solve()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb56"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Coefficient matrix inverse</span></span>
+<span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>C_inv <span class="ot">&lt;-</span> <span class="fu">solve</span>(C)</span>
+<span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>C_inv</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,] -1.5  0.5  0.5
+[2,]  2.0  0.0 -1.0
+[3,]  0.5 -0.5  0.5</code></pre>
+</div>
+</div>
+<p>To calculate the solution, we multiply the previous inverse matrix by the constant vector:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb58"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Solution</span></span>
+<span id="cb58-2"><a href="#cb58-2" aria-hidden="true" tabindex="-1"></a>s <span class="ot">&lt;-</span> C_inv <span class="sc">%*%</span> r</span>
+<span id="cb58-3"><a href="#cb58-3" aria-hidden="true" tabindex="-1"></a>s</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1]
+[1,]    3
+[2,]    7
+[3,]    5</code></pre>
+</div>
+</div>
+<p>Thus the solution to our system of equations is as follows:</p>
+<ul>
+<li><span class="math inline">\(a = 3\)</span></li>
+<li><span class="math inline">\(b = 7\)</span></li>
+<li><span class="math inline">\(c = 5\)</span></li>
+</ul>
+</section>
+<section id="determinant-of-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="determinant-of-a-matrix">Determinant of a matrix</h2>
+<p>The determinant of a matrix is a scalar associated with that matrix and is commonly denoted as <span class="math inline">\(\text{det}(A)\)</span> or <span class="math inline">\(|A|\)</span>. The process for calculating the determinant varies depending on the size of the matrix.</p>
+<ol type="1">
+<li><em>First-Order Matrix:</em></li>
+</ol>
+<p>For a <span class="math inline">\(1 \times 1\)</span> matrix, which is simply a number, the determinant is equal to that number.</p>
+<pre><code>$\text{det}([a]) = a$</code></pre>
+<ol start="2" type="1">
+<li><em>Second-Order Matrices:</em></li>
+</ol>
+<p>For a <span class="math inline">\(2 \times 2\)</span> matrix:</p>
+<pre><code>$\text{det}\begin{bmatrix} a &amp; b \\ c &amp; d \end{bmatrix} = ad - bc$</code></pre>
+<ol start="3" type="1">
+<li><em>Higher-Order Matrices:</em></li>
+</ol>
+<p>For an <span class="math inline">\(n \times n\)</span> square matrix <span class="math inline">\(A\)</span>, the determinant can be calculated using cofactor expansion or more advanced methods such as diagonalization.</p>
+<p>The general formula for the determinant of an <span class="math inline">\(n \times n\)</span> matrix <span class="math inline">\(A\)</span> can be expressed recursively in terms of minors and cofactors:</p>
+<pre><code>$\text{det}(A) = \sum_{i=1}^{n} (-1)^{i+j} \cdot a_{ij} \cdot \text{det}(M_{ij})$</code></pre>
+<p>Where:</p>
+<ul>
+<li><span class="math inline">\(a_{ij}\)</span> is the element in row <span class="math inline">\(i\)</span>, column <span class="math inline">\(j\)</span> of matrix <span class="math inline">\(A\)</span>.</li>
+<li><span class="math inline">\(\text{det}(M_{ij})\)</span> is the determinant of the minor obtained by removing row <span class="math inline">\(i\)</span> and column <span class="math inline">\(j\)</span> from matrix <span class="math inline">\(A\)</span>.</li>
+</ul>
+<p>To carry out this operation, we use the function <code>det()</code>:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb63"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1"><a href="#cb63-1" aria-hidden="true" tabindex="-1"></a>C</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    1    1
+[2,]    3    2    1
+[3,]    2    1    2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb65"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><a href="#cb65-1" aria-hidden="true" tabindex="-1"></a><span class="fu">det</span>(C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] -2</code></pre>
+</div>
+</div>
+</section>
+<section id="transpose-of-a-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="transpose-of-a-matrix">Transpose of a Matrix</h2>
+<p>The transpose of a matrix is an operation that involves swapping its rows and columns. It is commonly denoted by <span class="math inline">\(A^T\)</span> or <span class="math inline">\(A'\)</span>. If <span class="math inline">\(A\)</span> is an <span class="math inline">\(m \times n\)</span> matrix, then the transpose <span class="math inline">\(A^T\)</span> is an <span class="math inline">\(n \times m\)</span> matrix obtained by exchanging the rows and columns of the original matrix.</p>
+<p>Mathematically, if <span class="math inline">\(A\)</span> has elements <span class="math inline">\(a_{ij}\)</span>, then the transpose <span class="math inline">\(A^T\)</span> has elements <span class="math inline">\(b_{ij}\)</span> where <span class="math inline">\(b_{ij} = a_{ji}\)</span>. In other words, the element in row <span class="math inline">\(i\)</span>, column <span class="math inline">\(j\)</span> of <span class="math inline">\(A^T\)</span> is the same as the element in row <span class="math inline">\(j\)</span>, column <span class="math inline">\(i\)</span> of <span class="math inline">\(A\)</span>.</p>
+<p>For example, if <span class="math inline">\(A\)</span> is:</p>
+<p><span class="math inline">\(A = \begin{bmatrix} 1 &amp; 2 &amp; 3 \\ 4 &amp; 5 &amp; 6 \end{bmatrix}\)</span></p>
+<p>Then, the transpose <span class="math inline">\(A^T\)</span> would be:</p>
+<p><span class="math inline">\(A^T = \begin{bmatrix} 1 &amp; 4 \\ 2 &amp; 5 \\ 3 &amp; 6 \end{bmatrix}\)</span></p>
+<p>Some important properties of the transpose include:</p>
+<ol type="1">
+<li><span class="math inline">\((A^T)^T = A\)</span></li>
+<li><span class="math inline">\((cA)^T = cA^T\)</span>, where <span class="math inline">\(c\)</span> is a constant.</li>
+<li><span class="math inline">\((A + B)^T = A^T + B^T\)</span>, where <span class="math inline">\(A\)</span> and <span class="math inline">\(B\)</span> are matrices compatible for addition.</li>
+</ol>
+<p>We use the <code>t()</code> function to obtain the transpose of a matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb67"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1"><a href="#cb67-1" aria-hidden="true" tabindex="-1"></a>C</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    1    1
+[2,]    3    2    1
+[3,]    2    1    2</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb69"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><a href="#cb69-1" aria-hidden="true" tabindex="-1"></a><span class="fu">t</span>(C)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    1    3    2
+[2,]    1    2    1
+[3,]    1    1    2</code></pre>
+</div>
+</div>
+</section>
+<section id="identity-matrix" class="level2">
+<h2 class="anchored" data-anchor-id="identity-matrix">Identity matrix</h2>
+<p>The identity matrix, commonly denoted by <span class="math inline">\(I_n\)</span> or simply <span class="math inline">\(I\)</span>, is an <span class="math inline">\(n \times n\)</span> square matrix that has ones on its main diagonal (from the upper-left to the lower-right) and zeros in the rest of its elements. In other words, an identity matrix is a square matrix where all elements outside the main diagonal are zero, and all elements on the main diagonal are one.</p>
+<p>The general form of an <span class="math inline">\(n \times n\)</span> identity matrix is:</p>
+<p><span class="math inline">\(I_n = \begin{bmatrix} 1 &amp; 0 &amp; \ldots &amp; 0 \\ 0 &amp; 1 &amp; \ldots &amp; 0 \\ \vdots &amp; \vdots &amp; \ddots &amp; \vdots \\ 0 &amp; 0 &amp; \ldots &amp; 1 \end{bmatrix}\)</span></p>
+<p>Where <span class="math inline">\(n\)</span> represents the size of the identity matrix.</p>
+<p>It is important to note that the distinctive property of the identity matrix is that when any square matrix <span class="math inline">\(A\)</span> is multiplied by the appropriate identity matrix, the result is the same matrix <span class="math inline">\(A\)</span>. In mathematical terms, if <span class="math inline">\(A\)</span> is an <span class="math inline">\(n \times m\)</span> matrix, then <span class="math inline">\(I_n \times A = A \times I_m = A\)</span>, provided that the dimensions are compatible for multiplication.</p>
+<p>To define a identity matrix we use the <code>diag()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb71"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><a href="#cb71-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identity matrix of 2 x 2</span></span>
+<span id="cb71-2"><a href="#cb71-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(<span class="dv">2</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    1    0
+[2,]    0    1</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb73"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><a href="#cb73-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identity matrix of 4 x 4</span></span>
+<span id="cb73-2"><a href="#cb73-2" aria-hidden="true" tabindex="-1"></a><span class="fu">diag</span>(<span class="dv">4</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3] [,4]
+[1,]    1    0    0    0
+[2,]    0    1    0    0
+[3,]    0    0    1    0
+[4,]    0    0    0    1</code></pre>
+</div>
+</div>
+</section>
+<section id="eigenvalues-and-eingenvectors" class="level2">
+<h2 class="anchored" data-anchor-id="eigenvalues-and-eingenvectors">Eigenvalues and eingenvectors</h2>
+<p>The concepts of eigenvalues and eigenvectors are fundamental in linear algebra and apply to linear transformations represented by matrices.</p>
+<ol type="1">
+<li><em>Eigenvalues:</em></li>
+</ol>
+<p>Given a square matrix <span class="math inline">\(A\)</span>, an eigenvalue <span class="math inline">\(\lambda\)</span> is a scalar such that when multiplied by a nonzero vector <span class="math inline">\(v\)</span>, the result is simply the same vector scaled by <span class="math inline">\(\lambda\)</span>:</p>
+<pre><code>$A \mathbf{v} = \lambda \mathbf{v}$</code></pre>
+<p>Here, <span class="math inline">\(\mathbf{v}\)</span> is the corresponding eigenvector associated with the eigenvalue <span class="math inline">\(\lambda\)</span>. It’s important to note that for an eigenvalue and its corresponding eigenvector, the multiplication of matrix <span class="math inline">\(A\)</span> by vector <span class="math inline">\(\mathbf{v}\)</span> results in a mere scaling of the vector by the eigenvalue.</p>
+<ol start="2" type="1">
+<li><em>Eigenvectors:</em></li>
+</ol>
+<p>Given an eigenvalue <span class="math inline">\(\lambda\)</span>, the corresponding eigenvector <span class="math inline">\(\mathbf{v}\)</span> is a nonzero vector that satisfies the equation:</p>
+<pre><code>$A \mathbf{v} = \lambda \mathbf{v}$</code></pre>
+<p>In other words, when matrix <span class="math inline">\(A\)</span> is multiplied by the eigenvector <span class="math inline">\(\mathbf{v}\)</span>, the result is simply the same vector scaled by the eigenvalue <span class="math inline">\(\lambda\)</span>.</p>
+<p>Eigenvectors provide special directions in which the linear transformation represented by matrix <span class="math inline">\(A\)</span> has only a scaling effect. The magnitude of this scaling is determined by the corresponding eigenvalue.</p>
+<p>We use the function <code>eigen()</code> to obtain the eigenvectors and eigenvalues of a given matrix:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb77"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><a href="#cb77-1" aria-hidden="true" tabindex="-1"></a><span class="co"># A matrix of 2 x 2</span></span>
+<span id="cb77-2"><a href="#cb77-2" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">3</span>, <span class="dv">4</span>, <span class="dv">0</span>, <span class="dv">5</span>), <span class="at">nrow =</span> <span class="dv">2</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb77-3"><a href="#cb77-3" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    3    4
+[2,]    0    5</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb79"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><a href="#cb79-1" aria-hidden="true" tabindex="-1"></a><span class="co"># eigen function</span></span>
+<span id="cb79-2"><a href="#cb79-2" aria-hidden="true" tabindex="-1"></a>A_ei <span class="ot">&lt;-</span> <span class="fu">eigen</span>(A)</span>
+<span id="cb79-3"><a href="#cb79-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb79-4"><a href="#cb79-4" aria-hidden="true" tabindex="-1"></a><span class="co"># eigenvalues</span></span>
+<span id="cb79-5"><a href="#cb79-5" aria-hidden="true" tabindex="-1"></a>A_lmd <span class="ot">&lt;-</span> A_ei<span class="sc">$</span>values</span>
+<span id="cb79-6"><a href="#cb79-6" aria-hidden="true" tabindex="-1"></a>A_lmd</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 5 3</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb81"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><a href="#cb81-1" aria-hidden="true" tabindex="-1"></a><span class="co"># eigenvectors</span></span>
+<span id="cb81-2"><a href="#cb81-2" aria-hidden="true" tabindex="-1"></a>A_ev <span class="ot">&lt;-</span> A_ei<span class="sc">$</span>vectors</span>
+<span id="cb81-3"><a href="#cb81-3" aria-hidden="true" tabindex="-1"></a>A_ev</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1] [,2]
+[1,] 0.8944272    1
+[2,] 0.4472136    0</code></pre>
+</div>
+</div>
+<p>Interestingly, the original matrix can be decomposed as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb83"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1"><a href="#cb83-1" aria-hidden="true" tabindex="-1"></a>A_ev <span class="sc">%*%</span> <span class="fu">diag</span>(A_lmd) <span class="sc">%*%</span> <span class="fu">solve</span>(A_ev)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2]
+[1,]    3    4
+[2,]    0    5</code></pre>
+</div>
+</div>
+</section>
+<section id="gram-schmidt-process" class="level2">
+<h2 class="anchored" data-anchor-id="gram-schmidt-process">Gram-Schmidt process</h2>
+<p>The Gram-Schmidt process is a method used in linear algebra to take a set of linearly independent vectors and construct from them an orthogonal or orthonormal set. This process is useful in various contexts, such as matrix diagonalization, solving systems of linear equations, and QR factorization.</p>
+<p>Given a set of vectors <span class="math inline">\(\{\mathbf{v}_1, \mathbf{v}_2, \ldots, \mathbf{v}_n\}\)</span> in a Euclidean vector space, the Gram-Schmidt process generates an orthogonal set <span class="math inline">\(\{\mathbf{u}_1, \mathbf{u}_2, \ldots, \mathbf{u}_n\}\)</span> or an orthonormal set <span class="math inline">\(\{\mathbf{q}_1, \mathbf{q}_2, \ldots, \mathbf{q}_n\}\)</span> of vectors.</p>
+<p>The Gram-Schmidt process is valuable in situations where we need to work with sets of vectors that are not orthogonal initially but desires to obtain orthogonal sets to simplify calculations and analyses.</p>
+<p>To perform this process, you can use the <code>gramSchmidt()</code> function from <code>pracma</code> package:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb85"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><a href="#cb85-1" aria-hidden="true" tabindex="-1"></a><span class="co">#install.packages("pracma")</span></span>
+<span id="cb85-2"><a href="#cb85-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(pracma)</span>
+<span id="cb85-3"><a href="#cb85-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb85-4"><a href="#cb85-4" aria-hidden="true" tabindex="-1"></a><span class="co"># A matrix of 3 x 3</span></span>
+<span id="cb85-5"><a href="#cb85-5" aria-hidden="true" tabindex="-1"></a>A <span class="ot">&lt;-</span> <span class="fu">matrix</span>(<span class="fu">c</span>(<span class="dv">2</span>, <span class="sc">-</span><span class="dv">2</span>, <span class="dv">18</span>, <span class="dv">2</span>, <span class="dv">1</span>, <span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">2</span>, <span class="dv">0</span>), <span class="at">nrow =</span> <span class="dv">3</span>, <span class="at">byrow =</span> <span class="cn">TRUE</span>)</span>
+<span id="cb85-6"><a href="#cb85-6" aria-hidden="true" tabindex="-1"></a>A</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    2   -2   18
+[2,]    2    1    0
+[3,]    1    2    0</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb87"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><a href="#cb87-1" aria-hidden="true" tabindex="-1"></a><span class="co"># gramSchmidt function</span></span>
+<span id="cb87-2"><a href="#cb87-2" aria-hidden="true" tabindex="-1"></a>A_gs <span class="ot">&lt;-</span> <span class="fu">gramSchmidt</span>(A)</span>
+<span id="cb87-3"><a href="#cb87-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb87-4"><a href="#cb87-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Orthogonalized matrix</span></span>
+<span id="cb87-5"><a href="#cb87-5" aria-hidden="true" tabindex="-1"></a>A_gs<span class="sc">$</span>Q</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>          [,1]       [,2]       [,3]
+[1,] 0.6666667 -0.6666667  0.3333333
+[2,] 0.6666667  0.3333333 -0.6666667
+[3,] 0.3333333  0.6666667  0.6666667</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb89"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><a href="#cb89-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Upper triangular matrix </span></span>
+<span id="cb89-2"><a href="#cb89-2" aria-hidden="true" tabindex="-1"></a>A_gs<span class="sc">$</span>R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    3    0   12
+[2,]    0    3  -12
+[3,]    0    0    6</code></pre>
+</div>
+</div>
+<p>Note that the above operation allows us to decompose the original matrix such that:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb91"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1"><a href="#cb91-1" aria-hidden="true" tabindex="-1"></a>A_gs<span class="sc">$</span>Q <span class="sc">%*%</span> A_gs<span class="sc">$</span>R</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>     [,1] [,2] [,3]
+[1,]    2   -2   18
+[2,]    2    1    0
+[3,]    1    2    0</code></pre>
+</div>
+</div>
+</section>
+</section>
+<section id="calculation-of-mean-and-variance-with-linear-algebra-operations" class="level1">
+<h1>Calculation of mean and variance with linear algebra operations</h1>
+<p>Statistics like the mean and the variance can be easily done with matrix operations.</p>
+<section id="mean" class="level2">
+<h2 class="anchored" data-anchor-id="mean">Mean</h2>
+<p>Let’s simulate some data and obtain the mean with the <code>mean()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb93"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><a href="#cb93-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Data</span></span>
+<span id="cb93-2"><a href="#cb93-2" aria-hidden="true" tabindex="-1"></a><span class="fu">set.seed</span>(<span class="dv">5</span>)</span>
+<span id="cb93-3"><a href="#cb93-3" aria-hidden="true" tabindex="-1"></a>y <span class="ot">&lt;-</span> <span class="fu">runif</span>(<span class="dv">100</span>, <span class="at">min =</span> <span class="dv">10</span>, <span class="at">max =</span> <span class="dv">35</span>)</span>
+<span id="cb93-4"><a href="#cb93-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb93-5"><a href="#cb93-5" aria-hidden="true" tabindex="-1"></a><span class="co"># mean function</span></span>
+<span id="cb93-6"><a href="#cb93-6" aria-hidden="true" tabindex="-1"></a><span class="fu">mean</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 22.96092</code></pre>
+</div>
+</div>
+<p>Using vector multiplication, the mean can be calculated as follows:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb95"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><a href="#cb95-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Sample size</span></span>
+<span id="cb95-2"><a href="#cb95-2" aria-hidden="true" tabindex="-1"></a>yl <span class="ot">&lt;-</span> <span class="fu">length</span>(y) </span>
+<span id="cb95-3"><a href="#cb95-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-4"><a href="#cb95-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Vector of ones of the same length as y</span></span>
+<span id="cb95-5"><a href="#cb95-5" aria-hidden="true" tabindex="-1"></a>v1 <span class="ot">&lt;-</span> <span class="fu">rep</span>(<span class="dv">1</span>, yl)</span>
+<span id="cb95-6"><a href="#cb95-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb95-7"><a href="#cb95-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculation of the mean</span></span>
+<span id="cb95-8"><a href="#cb95-8" aria-hidden="true" tabindex="-1"></a>y_mean <span class="ot">&lt;-</span> v1 <span class="sc">%*%</span> y <span class="sc">/</span> yl</span>
+<span id="cb95-9"><a href="#cb95-9" aria-hidden="true" tabindex="-1"></a>y_mean</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1]
+[1,] 22.96092</code></pre>
+</div>
+</div>
+</section>
+<section id="sample-variance" class="level2">
+<h2 class="anchored" data-anchor-id="sample-variance">Sample variance</h2>
+<p>Something similar can be done with the sample variance. First, let’s calculate the sample variance with the <code>var()</code> function:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb97"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><a href="#cb97-1" aria-hidden="true" tabindex="-1"></a><span class="co"># var function</span></span>
+<span id="cb97-2"><a href="#cb97-2" aria-hidden="true" tabindex="-1"></a><span class="fu">var</span>(y)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>[1] 57.33112</code></pre>
+</div>
+</div>
+<p>Now let’s calculate the sample variance with vector multiplication:</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb99"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><a href="#cb99-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Differences between the data and the sample mean</span></span>
+<span id="cb99-2"><a href="#cb99-2" aria-hidden="true" tabindex="-1"></a>r <span class="ot">&lt;-</span> y <span class="sc">-</span> <span class="fu">as.numeric</span>(y_mean)</span>
+<span id="cb99-3"><a href="#cb99-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb99-4"><a href="#cb99-4" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculation of the variance</span></span>
+<span id="cb99-5"><a href="#cb99-5" aria-hidden="true" tabindex="-1"></a>r <span class="sc">%*%</span> r <span class="sc">/</span> (yl <span class="sc">-</span> <span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>         [,1]
+[1,] 57.33112</code></pre>
+</div>
+</div>
+<p>This post is licensed under the <a href="http://creativecommons.org/licenses/by/4.0/">Creative Commons Attribution 4.0 International License</a></p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><a href="http://creativecommons.org/licenses/by/4.0/"><img src="https://img.shields.io/badge/License-CC%20BY%204.0-lightgrey.svg" class="img-fluid figure-img"></a></p>
+</figure>
+</div>
+
+
+</section>
+</section>
+
+</main> <!-- /main -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const disableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'prefetch';
+    }
+  }
+  const enableStylesheet = (stylesheets) => {
+    for (let i=0; i < stylesheets.length; i++) {
+      const stylesheet = stylesheets[i];
+      stylesheet.rel = 'stylesheet';
+    }
+  }
+  const manageTransitions = (selector, allowTransitions) => {
+    const els = window.document.querySelectorAll(selector);
+    for (let i=0; i < els.length; i++) {
+      const el = els[i];
+      if (allowTransitions) {
+        el.classList.remove('notransition');
+      } else {
+        el.classList.add('notransition');
+      }
+    }
+  }
+  const toggleColorMode = (alternate) => {
+    // Switch the stylesheets
+    const alternateStylesheets = window.document.querySelectorAll('link.quarto-color-scheme.quarto-color-alternate');
+    manageTransitions('#quarto-margin-sidebar .nav-link', false);
+    if (alternate) {
+      enableStylesheet(alternateStylesheets);
+      for (const sheetNode of alternateStylesheets) {
+        if (sheetNode.id === "quarto-bootstrap") {
+          toggleBodyColorMode(sheetNode);
+        }
+      }
+    } else {
+      disableStylesheet(alternateStylesheets);
+      toggleBodyColorPrimary();
+    }
+    manageTransitions('#quarto-margin-sidebar .nav-link', true);
+    // Switch the toggles
+    const toggles = window.document.querySelectorAll('.quarto-color-scheme-toggle');
+    for (let i=0; i < toggles.length; i++) {
+      const toggle = toggles[i];
+      if (toggle) {
+        if (alternate) {
+          toggle.classList.add("alternate");     
+        } else {
+          toggle.classList.remove("alternate");
+        }
+      }
+    }
+    // Hack to workaround the fact that safari doesn't
+    // properly recolor the scrollbar when toggling (#1455)
+    if (navigator.userAgent.indexOf('Safari') > 0 && navigator.userAgent.indexOf('Chrome') == -1) {
+      manageTransitions("body", false);
+      window.scrollTo(0, 1);
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+        manageTransitions("body", true);
+      }, 40);  
+    }
+  }
+  const isFileUrl = () => { 
+    return window.location.protocol === 'file:';
+  }
+  const hasAlternateSentinel = () => {  
+    let styleSentinel = getColorSchemeSentinel();
+    if (styleSentinel !== null) {
+      return styleSentinel === "alternate";
+    } else {
+      return false;
+    }
+  }
+  const setStyleSentinel = (alternate) => {
+    const value = alternate ? "alternate" : "default";
+    if (!isFileUrl()) {
+      window.localStorage.setItem("quarto-color-scheme", value);
+    } else {
+      localAlternateSentinel = value;
+    }
+  }
+  const getColorSchemeSentinel = () => {
+    if (!isFileUrl()) {
+      const storageValue = window.localStorage.getItem("quarto-color-scheme");
+      return storageValue != null ? storageValue : localAlternateSentinel;
+    } else {
+      return localAlternateSentinel;
+    }
+  }
+  let localAlternateSentinel = 'default';
+  // Dark / light mode switch
+  window.quartoToggleColorScheme = () => {
+    // Read the current dark / light value 
+    let toAlternate = !hasAlternateSentinel();
+    toggleColorMode(toAlternate);
+    setStyleSentinel(toAlternate);
+  };
+  // Ensure there is a toggle, if there isn't float one in the top right
+  if (window.document.querySelector('.quarto-color-scheme-toggle') === null) {
+    const a = window.document.createElement('a');
+    a.classList.add('top-right');
+    a.classList.add('quarto-color-scheme-toggle');
+    a.href = "";
+    a.onclick = function() { try { window.quartoToggleColorScheme(); } catch {} return false; };
+    const i = window.document.createElement("i");
+    i.classList.add('bi');
+    a.appendChild(i);
+    window.document.body.appendChild(a);
+  }
+  // Switch to dark mode if need be
+  if (hasAlternateSentinel()) {
+    toggleColorMode(true);
+  } else {
+    toggleColorMode(false);
+  }
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const isCodeAnnotation = (el) => {
+    for (const clz of el.classList) {
+      if (clz.startsWith('code-annotation-')) {                     
+        return true;
+      }
+    }
+    return false;
+  }
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    text: function(trigger) {
+      const codeEl = trigger.previousElementSibling.cloneNode(true);
+      for (const childEl of codeEl.children) {
+        if (isCodeAnnotation(childEl)) {
+          childEl.remove();
+        }
+      }
+      return codeEl.innerText;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+      let selectedAnnoteEl;
+      const selectorForAnnotation = ( cell, annotation) => {
+        let cellAttr = 'data-code-cell="' + cell + '"';
+        let lineAttr = 'data-code-annotation="' +  annotation + '"';
+        const selector = 'span[' + cellAttr + '][' + lineAttr + ']';
+        return selector;
+      }
+      const selectCodeLines = (annoteEl) => {
+        const doc = window.document;
+        const targetCell = annoteEl.getAttribute("data-target-cell");
+        const targetAnnotation = annoteEl.getAttribute("data-target-annotation");
+        const annoteSpan = window.document.querySelector(selectorForAnnotation(targetCell, targetAnnotation));
+        const lines = annoteSpan.getAttribute("data-code-lines").split(",");
+        const lineIds = lines.map((line) => {
+          return targetCell + "-" + line;
+        })
+        let top = null;
+        let height = null;
+        let parent = null;
+        if (lineIds.length > 0) {
+            //compute the position of the single el (top and bottom and make a div)
+            const el = window.document.getElementById(lineIds[0]);
+            top = el.offsetTop;
+            height = el.offsetHeight;
+            parent = el.parentElement.parentElement;
+          if (lineIds.length > 1) {
+            const lastEl = window.document.getElementById(lineIds[lineIds.length - 1]);
+            const bottom = lastEl.offsetTop + lastEl.offsetHeight;
+            height = bottom - top;
+          }
+          if (top !== null && height !== null && parent !== null) {
+            // cook up a div (if necessary) and position it 
+            let div = window.document.getElementById("code-annotation-line-highlight");
+            if (div === null) {
+              div = window.document.createElement("div");
+              div.setAttribute("id", "code-annotation-line-highlight");
+              div.style.position = 'absolute';
+              parent.appendChild(div);
+            }
+            div.style.top = top - 2 + "px";
+            div.style.height = height + 4 + "px";
+            let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
+            if (gutterDiv === null) {
+              gutterDiv = window.document.createElement("div");
+              gutterDiv.setAttribute("id", "code-annotation-line-highlight-gutter");
+              gutterDiv.style.position = 'absolute';
+              const codeCell = window.document.getElementById(targetCell);
+              const gutter = codeCell.querySelector('.code-annotation-gutter');
+              gutter.appendChild(gutterDiv);
+            }
+            gutterDiv.style.top = top - 2 + "px";
+            gutterDiv.style.height = height + 4 + "px";
+          }
+          selectedAnnoteEl = annoteEl;
+        }
+      };
+      const unselectCodeLines = () => {
+        const elementsIds = ["code-annotation-line-highlight", "code-annotation-line-highlight-gutter"];
+        elementsIds.forEach((elId) => {
+          const div = window.document.getElementById(elId);
+          if (div) {
+            div.remove();
+          }
+        });
+        selectedAnnoteEl = undefined;
+      };
+      // Attach click handler to the DT
+      const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
+      for (const annoteDlNode of annoteDls) {
+        annoteDlNode.addEventListener('click', (event) => {
+          const clickedEl = event.target;
+          if (clickedEl !== selectedAnnoteEl) {
+            unselectCodeLines();
+            const activeEl = window.document.querySelector('dt[data-target-cell].code-annotation-active');
+            if (activeEl) {
+              activeEl.classList.remove('code-annotation-active');
+            }
+            selectCodeLines(clickedEl);
+            clickedEl.classList.add('code-annotation-active');
+          } else {
+            // Unselect the line
+            unselectCodeLines();
+            clickedEl.classList.remove('code-annotation-active');
+          }
+        });
+      }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
