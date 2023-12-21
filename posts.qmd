@@ -1,7 +1,5 @@
 ---
-title: "Juan Pablo Carreón Hidalgo"
 subtitle: "Data analysis, science and other stuff"
-site-path: index.qmd
 listing:
   contents: posts
   sort: "date desc"

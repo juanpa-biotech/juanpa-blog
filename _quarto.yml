@@ -18,8 +18,6 @@ website:
 
 format:
   html:
-    theme: simplex
-    linkcolor: "#6633c4"
+    theme: darkly
     code-copy: true
     footnotes-hover: true
-    css: styles.css
