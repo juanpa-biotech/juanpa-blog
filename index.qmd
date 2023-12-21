@@ -1,14 +1,7 @@
 ---
-title: "Data analysis, science and other stuff 🤓"
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: true
-  filter-ui: true
-page-layout: full
-title-block-banner: true
+title: "Welcome! 🤓💻🧪🧬📉"
+about:
+  template: solana
 ---
 
 Hello, welcome to my blog.
@@ -24,3 +17,35 @@ Previously I was using the "blogdown" package, but I must admit that things beca
 If you have any questions about any of the posts please email me at *jpch_26\@outlook.com* or *jpch_biotech\@outlook.com*. In the *About the author* section you will find my social networks, you can also contact me there!
 
 Thank you very much for visiting my blog, I hope you find it useful, see you next time! 🤓
+
+## New posts
+
+::: card
+::: {.card-header style="background-color: white; font-size: 18;"}
+### [Basic Linear Algebra with R](https://juanpacarreon.com/posts/linear-algebra/)
+:::
+
+::: {#card-img}
+[![](posts/linear-algebra/images/325px-Linear_subspaces_with_shading.svg.png)](https://juanpacarreon.com/posts/linear-algebra/){fig-align="center" width="450"}
+:::
+
+::: card-body
+A brief tutorial with R code to perform some linear algebra operations.
+:::
+:::
+
+::: card
+::: {.card-header style="background-color: white; font-size: 18;"}
+### [What is biotechnology?](https://juanpacarreon.com/posts/biotechnology/){fig-align="center" width="450"}
+:::
+
+<div>
+
+[![](posts/biotechnology/images/img_3.png)](https://juanpacarreon.com/posts/biotechnology/)
+
+</div>
+
+::: card-body
+A brief explanation of what biotechnology is and some of its applications.
+:::
+:::

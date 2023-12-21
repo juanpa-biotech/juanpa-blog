@@ -4,9 +4,6 @@ image: jpch_photo.jpg
 about:
   template: solana
   links:
-    - icon: twitter
-      text: Twitter
-      href: https://twitter.com/juanpa_biotech
     - icon: linkedin
       text: LinkedIn
       href: https://mx.linkedin.com/in/juan-pablo-carre%C3%B3n-hidalgo-667567a1
@@ -17,16 +14,16 @@ about:
 
 Hello! Welcome to my personal blog.
 
-My name is Juan Pablo. I have a PhD in Biotechnology from the *Universidad Autónoma Universidad Autónoma Metropolitana*.
+My name is Juan Pablo Carreón Hidalgo. I have a PhD in Biotechnology from the *Universidad Autónoma Universidad Autónoma Metropolitana*.
 
 In this blog I write about various topics of my interest such as data analysis and science in general. I hope you find it useful.
 
 You can contact me through my email or my social networks:
 
-jpch_26\@outlook.com\
-jpch_biotech\@outlook.com\
-[LinkedIn](https://www.linkedin.com/in/juan-pablo-carre%C3%B3n-hidalgo-667567a1/)\
-[Twitter](https://twitter.com/juanpa_biotech)
+jpch_26@outlook.com  
+jpch_biotech@outlook.com  
+[LinkedIn](https://www.linkedin.com/in/juan-pablo-carre%C3%B3n-hidalgo-667567a1/)  
+[Twitter](https://twitter.com/juanpa_biotech)  
 
 My certifications:
 
