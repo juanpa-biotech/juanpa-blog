@@ -7,7 +7,7 @@ toc: true
 toc-location: left
 ---
 
-![](/posts/linear-algebra/images/325px-Linear_subspaces_with_shading.svg.png){fig-align="center"}
+![](/posts/linear-algebra/images/linear_algebra.jpg){fig-align="center"}
 
 # What is linear algebra?
 

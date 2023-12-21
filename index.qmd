@@ -12,9 +12,9 @@ In this blog I share posts with topics of my interest, such as data analysis wit
 
 Some time ago I maintained a blog called "R in the Lab" focused exclusively on the analysis with R of data obtained in the laboratory of chemical and biological sciences, but after some stumbles I decided to start again with a blog where I could write about any topic.
 
-Previously I was using the "blogdown" package, but I must admit that things became a bit tedious, especially the maintenance and the inclusion of new posts. In the search for alternatives I found the fabulous post by [Rebecca Barter - Thanks, Quarto, for saving my blog!](https://www.rebeccabarter.com/blog/2023-03-21-quarto-website), which gave me the idea for the design of my new blog.
+Previously I was using the "blogdown" package, but I must admit that things became a bit tedious, especially the maintenance and the inclusion of new posts. In the search for alternatives I found the fabulous post by <a href="https://www.rebeccabarter.com/blog/2023-03-21-quarto-website" target="_blank">*Rebecca Barter - Thanks, Quarto, for saving my blog!*</a>, which gave me the idea for the design of my new blog.
 
-If you have any questions about any of the posts please email me at *jpch_26\@outlook.com* or *jpch_biotech\@outlook.com*. In the *About the author* section you will find my social networks, you can also contact me there!
+If you have any questions about any of the posts please email me at *jpch_26\@outlook.com* or *jpch_biotech\@outlook.com*. In the <a href="https://juanpacarreon.com/about" target="_blank">*About the author*</a> section you will find my social networks, you can also contact me there!
 
 Thank you very much for visiting my blog, I hope you find it useful, see you next time! 🤓
 
@@ -26,7 +26,7 @@ Thank you very much for visiting my blog, I hope you find it useful, see you nex
 :::
 
 ::: {#card-img}
-[![](posts/linear-algebra/images/325px-Linear_subspaces_with_shading.svg.png)](https://juanpacarreon.com/posts/linear-algebra/){fig-align="center" width="450"}
+[![](posts/linear-algebra/images/linear_algebra.jpg)](https://juanpacarreon.com/posts/linear-algebra/){fig-align="center" width="450"}
 :::
 
 ::: card-body
