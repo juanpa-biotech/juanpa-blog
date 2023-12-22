@@ -418,13 +418,13 @@ The determinant of a matrix is a scalar associated with that matrix and is commo
 
 For a $1 \times 1$ matrix, which is simply a number, the determinant is equal to that number.
 
-    $\text{det}([a]) = a$
+  $\text{det}([a]) = a$
 
 2.  *Second-Order Matrices:*
 
 For a $2 \times 2$ matrix:
 
-    $\text{det}\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc$
+  $\text{det}\begin{bmatrix} a & b \\ c & d \end{bmatrix} = ad - bc$
 
 3.  *Higher-Order Matrices:*
 
@@ -432,7 +432,7 @@ For an $n \times n$ square matrix $A$, the determinant can be calculated using c
 
 The general formula for the determinant of an $n \times n$ matrix $A$ can be expressed recursively in terms of minors and cofactors:
 
-    $\text{det}(A) = \sum_{i=1}^{n} (-1)^{i+j} \cdot a_{ij} \cdot \text{det}(M_{ij})$
+  $\text{det}(A) = \sum_{i=1}^{n} (-1)^{i+j} \cdot a_{ij} \cdot \text{det}(M_{ij})$
 
 Where:
 
@@ -503,7 +503,7 @@ The concepts of eigenvalues and eigenvectors are fundamental in linear algebra a
 
 Given a square matrix $A$, an eigenvalue $\lambda$ is a scalar such that when multiplied by a nonzero vector $v$, the result is simply the same vector scaled by $\lambda$:
 
-    $A \mathbf{v} = \lambda \mathbf{v}$
+  $A \mathbf{v} = \lambda \mathbf{v}$
 
 Here, $\mathbf{v}$ is the corresponding eigenvector associated with the eigenvalue $\lambda$. It's important to note that for an eigenvalue and its corresponding eigenvector, the multiplication of matrix $A$ by vector $\mathbf{v}$ results in a mere scaling of the vector by the eigenvalue.
 
@@ -511,7 +511,7 @@ Here, $\mathbf{v}$ is the corresponding eigenvector associated with the eigenval
 
 Given an eigenvalue $\lambda$, the corresponding eigenvector $\mathbf{v}$ is a nonzero vector that satisfies the equation:
 
-    $A \mathbf{v} = \lambda \mathbf{v}$
+  $A \mathbf{v} = \lambda \mathbf{v}$
 
 In other words, when matrix $A$ is multiplied by the eigenvector $\mathbf{v}$, the result is simply the same vector scaled by the eigenvalue $\lambda$.
 

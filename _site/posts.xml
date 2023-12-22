@@ -878,18 +878,18 @@ font-style: inherit;">%*%</span> r</span>
 <li><em>First-Order Matrix:</em></li>
 </ol>
 <p>For a <img src="https://latex.codecogs.com/png.latex?1%20%5Ctimes%201"> matrix, which is simply a number, the determinant is equal to that number.</p>
-<pre><code>$\text{det}([a]) = a$</code></pre>
+<p><img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bdet%7D(%5Ba%5D)%20=%20a"></p>
 <ol start="2" type="1">
 <li><em>Second-Order Matrices:</em></li>
 </ol>
 <p>For a <img src="https://latex.codecogs.com/png.latex?2%20%5Ctimes%202"> matrix:</p>
-<pre><code>$\text{det}\begin{bmatrix} a &amp; b \\ c &amp; d \end{bmatrix} = ad - bc$</code></pre>
+<p><img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bdet%7D%5Cbegin%7Bbmatrix%7D%20a%20&amp;%20b%20%5C%5C%20c%20&amp;%20d%20%5Cend%7Bbmatrix%7D%20=%20ad%20-%20bc"></p>
 <ol start="3" type="1">
 <li><em>Higher-Order Matrices:</em></li>
 </ol>
 <p>For an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> square matrix <img src="https://latex.codecogs.com/png.latex?A">, the determinant can be calculated using cofactor expansion or more advanced methods such as diagonalization.</p>
 <p>The general formula for the determinant of an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20n"> matrix <img src="https://latex.codecogs.com/png.latex?A"> can be expressed recursively in terms of minors and cofactors:</p>
-<pre><code>$\text{det}(A) = \sum_{i=1}^{n} (-1)^{i+j} \cdot a_{ij} \cdot \text{det}(M_{ij})$</code></pre>
+<p><img src="https://latex.codecogs.com/png.latex?%5Ctext%7Bdet%7D(A)%20=%20%5Csum_%7Bi=1%7D%5E%7Bn%7D%20(-1)%5E%7Bi+j%7D%20%5Ccdot%20a_%7Bij%7D%20%5Ccdot%20%5Ctext%7Bdet%7D(M_%7Bij%7D)"></p>
 <p>Where:</p>
 <ul>
 <li><img src="https://latex.codecogs.com/png.latex?a_%7Bij%7D"> is the element in row <img src="https://latex.codecogs.com/png.latex?i">, column <img src="https://latex.codecogs.com/png.latex?j"> of matrix <img src="https://latex.codecogs.com/png.latex?A">.</li>
@@ -897,14 +897,14 @@ font-style: inherit;">%*%</span> r</span>
 </ul>
 <p>To carry out this operation, we use the function <code>det()</code>:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb63" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb63-1">C</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb60" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb60-1">C</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
 [1,]    1    1    1
 [2,]    3    2    1
 [3,]    2    1    2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb65" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb65-1"><span class="fu" style="color: #4758AB;
+<div class="sourceCode cell-code" id="cb62" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb62-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">det</span>(C)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -928,14 +928,14 @@ font-style: inherit;">det</span>(C)</span></code></pre></div>
 </ol>
 <p>We use the <code>t()</code> function to obtain the transpose of a matrix:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb67" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb67-1">C</span></code></pre></div>
+<div class="sourceCode cell-code" id="cb64" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb64-1">C</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
 [1,]    1    1    1
 [2,]    3    2    1
 [3,]    2    1    2</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb69" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb69-1"><span class="fu" style="color: #4758AB;
+<div class="sourceCode cell-code" id="cb66" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb66-1"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">t</span>(C)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -955,10 +955,10 @@ font-style: inherit;">t</span>(C)</span></code></pre></div>
 <p>It is important to note that the distinctive property of the identity matrix is that when any square matrix <img src="https://latex.codecogs.com/png.latex?A"> is multiplied by the appropriate identity matrix, the result is the same matrix <img src="https://latex.codecogs.com/png.latex?A">. In mathematical terms, if <img src="https://latex.codecogs.com/png.latex?A"> is an <img src="https://latex.codecogs.com/png.latex?n%20%5Ctimes%20m"> matrix, then <img src="https://latex.codecogs.com/png.latex?I_n%20%5Ctimes%20A%20=%20A%20%5Ctimes%20I_m%20=%20A">, provided that the dimensions are compatible for multiplication.</p>
 <p>To define a identity matrix we use the <code>diag()</code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb71" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb71-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb68" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb68-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Identity matrix of 2 x 2</span></span>
-<span id="cb71-2"><span class="fu" style="color: #4758AB;
+<span id="cb68-2"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">diag</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -968,10 +968,10 @@ font-style: inherit;">2</span>)</span></code></pre></div>
 [1,]    1    0
 [2,]    0    1</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb73" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb73-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb70" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb70-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Identity matrix of 4 x 4</span></span>
-<span id="cb73-2"><span class="fu" style="color: #4758AB;
+<span id="cb70-2"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">diag</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
@@ -992,21 +992,21 @@ font-style: inherit;">4</span>)</span></code></pre></div>
 <li><em>Eigenvalues:</em></li>
 </ol>
 <p>Given a square matrix <img src="https://latex.codecogs.com/png.latex?A">, an eigenvalue <img src="https://latex.codecogs.com/png.latex?%5Clambda"> is a scalar such that when multiplied by a nonzero vector <img src="https://latex.codecogs.com/png.latex?v">, the result is simply the same vector scaled by <img src="https://latex.codecogs.com/png.latex?%5Clambda">:</p>
-<pre><code>$A \mathbf{v} = \lambda \mathbf{v}$</code></pre>
+<p><img src="https://latex.codecogs.com/png.latex?A%20%5Cmathbf%7Bv%7D%20=%20%5Clambda%20%5Cmathbf%7Bv%7D"></p>
 <p>Here, <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> is the corresponding eigenvector associated with the eigenvalue <img src="https://latex.codecogs.com/png.latex?%5Clambda">. It’s important to note that for an eigenvalue and its corresponding eigenvector, the multiplication of matrix <img src="https://latex.codecogs.com/png.latex?A"> by vector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> results in a mere scaling of the vector by the eigenvalue.</p>
 <ol start="2" type="1">
 <li><em>Eigenvectors:</em></li>
 </ol>
 <p>Given an eigenvalue <img src="https://latex.codecogs.com/png.latex?%5Clambda">, the corresponding eigenvector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D"> is a nonzero vector that satisfies the equation:</p>
-<pre><code>$A \mathbf{v} = \lambda \mathbf{v}$</code></pre>
+<p><img src="https://latex.codecogs.com/png.latex?A%20%5Cmathbf%7Bv%7D%20=%20%5Clambda%20%5Cmathbf%7Bv%7D"></p>
 <p>In other words, when matrix <img src="https://latex.codecogs.com/png.latex?A"> is multiplied by the eigenvector <img src="https://latex.codecogs.com/png.latex?%5Cmathbf%7Bv%7D">, the result is simply the same vector scaled by the eigenvalue <img src="https://latex.codecogs.com/png.latex?%5Clambda">.</p>
 <p>Eigenvectors provide special directions in which the linear transformation represented by matrix <img src="https://latex.codecogs.com/png.latex?A"> has only a scaling effect. The magnitude of this scaling is determined by the corresponding eigenvalue.</p>
 <p>We use the function <code>eigen()</code> to obtain the eigenvectors and eigenvalues of a given matrix:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb77" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb77-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb72" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb72-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># A matrix of 2 x 2</span></span>
-<span id="cb77-2">A <span class="ot" style="color: #003B4F;
+<span id="cb72-2">A <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1029,42 +1029,42 @@ background-color: null;
 font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
 background-color: null;
 font-style: inherit;">TRUE</span>)</span>
-<span id="cb77-3">A</span></code></pre></div>
+<span id="cb72-3">A</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2]
 [1,]    3    4
 [2,]    0    5</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb79" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb79-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb74" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb74-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># eigen function</span></span>
-<span id="cb79-2">A_ei <span class="ot" style="color: #003B4F;
+<span id="cb74-2">A_ei <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">eigen</span>(A)</span>
-<span id="cb79-3"></span>
-<span id="cb79-4"><span class="co" style="color: #5E5E5E;
+<span id="cb74-3"></span>
+<span id="cb74-4"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># eigenvalues</span></span>
-<span id="cb79-5">A_lmd <span class="ot" style="color: #003B4F;
+<span id="cb74-5">A_lmd <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> A_ei<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">$</span>values</span>
-<span id="cb79-6">A_lmd</span></code></pre></div>
+<span id="cb74-6">A_lmd</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[1] 5 3</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb81" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb81-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb76" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb76-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># eigenvectors</span></span>
-<span id="cb81-2">A_ev <span class="ot" style="color: #003B4F;
+<span id="cb76-2">A_ev <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> A_ei<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">$</span>vectors</span>
-<span id="cb81-3">A_ev</span></code></pre></div>
+<span id="cb76-3">A_ev</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>          [,1] [,2]
 [1,] 0.8944272    1
@@ -1073,7 +1073,7 @@ font-style: inherit;">$</span>vectors</span>
 </div>
 <p>Interestingly, the original matrix can be decomposed as follows:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb83" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb83-1">A_ev <span class="sc" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb78" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb78-1">A_ev <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%*%</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1096,17 +1096,17 @@ font-style: inherit;">solve</span>(A_ev)</span></code></pre></div>
 <p>The Gram-Schmidt process is valuable in situations where we need to work with sets of vectors that are not orthogonal initially but desires to obtain orthogonal sets to simplify calculations and analyses.</p>
 <p>To perform this process, you can use the <code>gramSchmidt()</code> function from <code>pracma</code> package:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb85" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb85-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb80" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb80-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">#install.packages("pracma")</span></span>
-<span id="cb85-2"><span class="fu" style="color: #4758AB;
+<span id="cb80-2"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">library</span>(pracma)</span>
-<span id="cb85-3"></span>
-<span id="cb85-4"><span class="co" style="color: #5E5E5E;
+<span id="cb80-3"></span>
+<span id="cb80-4"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># A matrix of 3 x 3</span></span>
-<span id="cb85-5">A <span class="ot" style="color: #003B4F;
+<span id="cb80-5">A <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1141,26 +1141,26 @@ background-color: null;
 font-style: inherit;">byrow =</span> <span class="cn" style="color: #8f5902;
 background-color: null;
 font-style: inherit;">TRUE</span>)</span>
-<span id="cb85-6">A</span></code></pre></div>
+<span id="cb80-6">A</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>     [,1] [,2] [,3]
 [1,]    2   -2   18
 [2,]    2    1    0
 [3,]    1    2    0</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb87" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb87-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb82" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb82-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># gramSchmidt function</span></span>
-<span id="cb87-2">A_gs <span class="ot" style="color: #003B4F;
+<span id="cb82-2">A_gs <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">gramSchmidt</span>(A)</span>
-<span id="cb87-3"></span>
-<span id="cb87-4"><span class="co" style="color: #5E5E5E;
+<span id="cb82-3"></span>
+<span id="cb82-4"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Orthogonalized matrix</span></span>
-<span id="cb87-5">A_gs<span class="sc" style="color: #5E5E5E;
+<span id="cb82-5">A_gs<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">$</span>Q</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1169,10 +1169,10 @@ font-style: inherit;">$</span>Q</span></code></pre></div>
 [2,] 0.6666667  0.3333333 -0.6666667
 [3,] 0.3333333  0.6666667  0.6666667</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb89" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb89-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb84" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb84-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Upper triangular matrix </span></span>
-<span id="cb89-2">A_gs<span class="sc" style="color: #5E5E5E;
+<span id="cb84-2">A_gs<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">$</span>R</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1184,7 +1184,7 @@ font-style: inherit;">$</span>R</span></code></pre></div>
 </div>
 <p>Note that the above operation allows us to decompose the original matrix such that:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb91" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb91-1">A_gs<span class="sc" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb86" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb86-1">A_gs<span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">$</span>Q <span class="sc" style="color: #5E5E5E;
 background-color: null;
@@ -1207,15 +1207,15 @@ font-style: inherit;">$</span>R</span></code></pre></div>
 <h2 class="anchored" data-anchor-id="mean">Mean</h2>
 <p>Let’s simulate some data and obtain the mean with the <code>mean()</code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb93" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb93-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb88" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb88-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Data</span></span>
-<span id="cb93-2"><span class="fu" style="color: #4758AB;
+<span id="cb88-2"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">set.seed</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">5</span>)</span>
-<span id="cb93-3">y <span class="ot" style="color: #003B4F;
+<span id="cb88-3">y <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
@@ -1230,11 +1230,11 @@ background-color: null;
 font-style: inherit;">max =</span> <span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">35</span>)</span>
-<span id="cb93-4"></span>
-<span id="cb93-5"><span class="co" style="color: #5E5E5E;
+<span id="cb88-4"></span>
+<span id="cb88-5"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># mean function</span></span>
-<span id="cb93-6"><span class="fu" style="color: #4758AB;
+<span id="cb88-6"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">mean</span>(y)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1243,37 +1243,37 @@ font-style: inherit;">mean</span>(y)</span></code></pre></div>
 </div>
 <p>Using vector multiplication, the mean can be calculated as follows:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb95" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb95-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb90" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb90-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Sample size</span></span>
-<span id="cb95-2">yl <span class="ot" style="color: #003B4F;
+<span id="cb90-2">yl <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">length</span>(y) </span>
-<span id="cb95-3"></span>
-<span id="cb95-4"><span class="co" style="color: #5E5E5E;
+<span id="cb90-3"></span>
+<span id="cb90-4"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Vector of ones of the same length as y</span></span>
-<span id="cb95-5">v1 <span class="ot" style="color: #003B4F;
+<span id="cb90-5">v1 <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">rep</span>(<span class="dv" style="color: #AD0000;
 background-color: null;
 font-style: inherit;">1</span>, yl)</span>
-<span id="cb95-6"></span>
-<span id="cb95-7"><span class="co" style="color: #5E5E5E;
+<span id="cb90-6"></span>
+<span id="cb90-7"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Calculation of the mean</span></span>
-<span id="cb95-8">y_mean <span class="ot" style="color: #003B4F;
+<span id="cb90-8">y_mean <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> v1 <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%*%</span> y <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">/</span> yl</span>
-<span id="cb95-9">y_mean</span></code></pre></div>
+<span id="cb90-9">y_mean</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>         [,1]
 [1,] 22.96092</code></pre>
@@ -1284,10 +1284,10 @@ font-style: inherit;">/</span> yl</span>
 <h2 class="anchored" data-anchor-id="sample-variance">Sample variance</h2>
 <p>Something similar can be done with the sample variance. First, let’s calculate the sample variance with the <code>var()</code> function:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb97" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb97-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb92" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb92-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># var function</span></span>
-<span id="cb97-2"><span class="fu" style="color: #4758AB;
+<span id="cb92-2"><span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">var</span>(y)</span></code></pre></div>
 <div class="cell-output cell-output-stdout">
@@ -1296,21 +1296,21 @@ font-style: inherit;">var</span>(y)</span></code></pre></div>
 </div>
 <p>Now let’s calculate the sample variance with vector multiplication:</p>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb99" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb99-1"><span class="co" style="color: #5E5E5E;
+<div class="sourceCode cell-code" id="cb94" style="background: #f1f3f5;"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb94-1"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Differences between the data and the sample mean</span></span>
-<span id="cb99-2">r <span class="ot" style="color: #003B4F;
+<span id="cb94-2">r <span class="ot" style="color: #003B4F;
 background-color: null;
 font-style: inherit;">&lt;-</span> y <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">-</span> <span class="fu" style="color: #4758AB;
 background-color: null;
 font-style: inherit;">as.numeric</span>(y_mean)</span>
-<span id="cb99-3"></span>
-<span id="cb99-4"><span class="co" style="color: #5E5E5E;
+<span id="cb94-3"></span>
+<span id="cb94-4"><span class="co" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;"># Calculation of the variance</span></span>
-<span id="cb99-5">r <span class="sc" style="color: #5E5E5E;
+<span id="cb94-5">r <span class="sc" style="color: #5E5E5E;
 background-color: null;
 font-style: inherit;">%*%</span> r <span class="sc" style="color: #5E5E5E;
 background-color: null;
